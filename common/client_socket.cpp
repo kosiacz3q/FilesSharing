@@ -1,9 +1,8 @@
 #include "client_socket.h"
 
 #include <iostream>
-#include <algorithm>
 
-ClientSocket::ClientSocket(unsigned short port, const std::string& address) {
+ClientSocket::ClientSocket(unsigned short port, core::string_view address) {
     mSocketDesc = socket(AF_INET, SOCK_STREAM, 0);
     if (mSocketDesc == -1) {
         std::cerr << "Could not create socket\n";
@@ -11,7 +10,7 @@ ClientSocket::ClientSocket(unsigned short port, const std::string& address) {
         return;
     }
 
-    mServer.sin_addr.s_addr = inet_addr(address.c_str());
+    mServer.sin_addr.s_addr = inet_addr(address.data());
     mServer.sin_family = AF_INET;
     mServer.sin_port = htons(port);
 
@@ -46,15 +45,32 @@ ClientSocket& ClientSocket::operator=(ClientSocket&& other) {
     return *this;
 }
 
-
-bool ClientSocket::send(const std::vector<char>& payload) {
+bool ClientSocket::send(const void* payload, size_t size) {
     if (!isValid()) return false;
 
-    if (::send(mSocketDesc, (const void*) payload.data(), payload.size(), 0) < 0) {
+    if (::send(mSocketDesc, payload, size, 0) < 0) {
         perror("Could not sent");
         return false;
     }
 
     return  true;
+}
+
+bool ClientSocket::send(const std::vector<char>& payload) {
+    return send(payload.data(), payload.size());
+}
+
+core::optional<std::vector<char>> ClientSocket::receive() {
+    if (!isValid()) return core::nullopt;
+    std::vector<char> buffer(receive_buffer_size);
+
+    auto res = recv(mSocketDesc, buffer.data(), buffer.size(), 0);
+    if (res < 0) {
+        perror("Could not receive");
+    }
+    buffer.resize(size_t(res));
+    buffer.shrink_to_fit();
+
+    return buffer;
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <core/string_view.hpp>
 #include <vector>
 #include <core/optional.hpp>
 #include "sockets.h"
@@ -9,8 +9,9 @@
 // server and client. ~Kuba
 
 class ClientSocket {
+    static constexpr size_t receive_buffer_size = 1 << 16;
 public:
-    ClientSocket(unsigned short port, const std::string& address);
+    ClientSocket(unsigned short port, core::string_view address);
     ClientSocket(ClientSocket&& other);
     ClientSocket& operator=(ClientSocket&& other);
 
@@ -21,6 +22,7 @@ public:
 
     bool isValid() const { return mMode == Mode::Initialized; }
     bool send(const std::vector<char>& payload);
+    bool send(const void* payload, size_t size);
     core::optional<std::vector<char>> receive();
 
 private:
