@@ -5,8 +5,8 @@
 
 #include "utils.h"
 
-ClientSocketManager::ClientSocketManager(ClientSocket&& socket) {
-    mContext = std::make_shared<Context>(std::move(socket));
+ClientSocketManager::ClientSocketManager(ClientSocket&& socket)
+    : mContext(std::make_shared<Context>(std::move(socket))){
     assert(mContext->mSocket.isValid());
     loop();
 }
