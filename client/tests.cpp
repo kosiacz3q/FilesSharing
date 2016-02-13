@@ -59,8 +59,9 @@ TEST_CASE("Api construction with payload", "[api]") {
 }
 
 TEST_CASE("Api construction with bytes", "[api]") {
-    Api api(0, 1, 2, {'a', 'p', 'i',});
+
     std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
+    Api api(bytes);
     REQUIRE(api.getType() == 0);
     REQUIRE(api.getStatus() == 1);
     REQUIRE(api.getID() == 2);
