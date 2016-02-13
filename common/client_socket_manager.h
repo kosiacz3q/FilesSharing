@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <memory>
 
 class ClientSocketManager {
 public:
@@ -23,9 +24,16 @@ private:
 
     std::vector<std::vector<char>> mIncomingBuffer;
     std::vector<std::vector<char>> mOutgoingBuffer;
-    std::mutex mIncomingMutex;
-    std::mutex mOutgoingMutex;
-    std::mutex mSocketMutex;
-    std::atomic<bool> mStop{false};
-    ClientSocket mSocket;
+
+    struct Context {
+
+        Context(ClientSocket&& socket) : mSocket(std::move(socket)) {}
+
+        std::mutex mIncomingMutex;
+        std::mutex mOutgoingMutex;
+        std::mutex mSocketMutex;
+        std::atomic<bool> mStop{false};
+        ClientSocket mSocket;
+    };
+    std::shared_ptr<Context> mContext;
 };
