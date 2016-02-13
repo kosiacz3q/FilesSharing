@@ -1,6 +1,5 @@
 #include "client_socket_manager.h"
 
-#include <cassert>
 #include <chrono>
 
 #include "utils.h"
