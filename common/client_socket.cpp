@@ -79,16 +79,13 @@ bool ClientSocket::send(const std::vector<char>& payload) {
 
 core::optional<std::vector<char>> ClientSocket::receive() {
     if (!isValid()) return core::nullopt;
-    std::vector<char> buffer(receive_buffer_size); // TODO: optimize not to allock each time
 
-    auto res = recv(mSocketDesc, buffer.data(), buffer.size(), 0);
+    auto res = recv(mSocketDesc, mReceiveBuffer.data(), mReceiveBuffer.size(), 0);
     if (res < 0) {
         return core::nullopt;
     }
-    buffer.resize(size_t(res));
-    buffer.shrink_to_fit();
 
-    return buffer;
+    return std::vector<char>(mReceiveBuffer.begin(), mReceiveBuffer.begin() + res);
 }
 
 

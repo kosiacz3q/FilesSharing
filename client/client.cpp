@@ -14,8 +14,9 @@ int main()
 
     ClientSocketManager manager(std::move(ss));
     manager.push({'Y', 'o', '!'});
-    sleep(4);
+    sleep(5);
     auto res = manager.pop();
     for (auto& x : res) cout << x;
-        cout << "\n";
+    res = manager.pop();
+    for (auto& x : res) cout << x;
 }

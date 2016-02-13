@@ -29,4 +29,5 @@ private:
     enum class Mode { Invalid, Initialized } mMode = Mode::Invalid;
     sockaddr_in mServer = {};
     int mSocketDesc = -1;
+    std::vector<char> mReceiveBuffer = std::vector<char>(1 << 16);
 };
