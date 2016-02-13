@@ -2,6 +2,7 @@
 #include "../catch/catch.hpp"
 
 #include "../common/utils.h"
+#include "../common/api.h"
 
 TEST_CASE("Bytification of ints", "[to_byte]") {
     int i = 0;
@@ -39,4 +40,35 @@ TEST_CASE("Joining vectors", "[join_vector]") {
     std::vector<char> second{1, 1};
     std::vector<char> third{2};
     REQUIRE(join_vectors({first, second, third}) == (std::vector<char>{0, 0, 0, 1, 1, 2}));
+}
+
+TEST_CASE("Api construction", "[api]") {
+    Api api(0, 1, 2);
+    REQUIRE(api.getType() == 0);
+    REQUIRE(api.getStatus() == 1);
+    REQUIRE(api.getID() == 2);
+    REQUIRE(api.getPayload().size() == 0);
+}
+
+TEST_CASE("Api construction with payload", "[api]") {
+    Api api(0, 1, 2, {'a', 'p', 'i',});
+    REQUIRE(api.getType() == 0);
+    REQUIRE(api.getStatus() == 1);
+    REQUIRE(api.getID() == 2);
+    REQUIRE(api.getPayload() == (std::vector<char>{'a', 'p', 'i'}));
+}
+
+TEST_CASE("Api construction with bytes", "[api]") {
+    Api api(0, 1, 2, {'a', 'p', 'i',});
+    std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
+    REQUIRE(api.getType() == 0);
+    REQUIRE(api.getStatus() == 1);
+    REQUIRE(api.getID() == 2);
+    REQUIRE(api.getPayload() == (std::vector<char>{'a', 'p', 'i'}));
+}
+
+TEST_CASE("Api bytification", "[api]") {
+    Api api(0, 1, 2, {'a', 'p', 'i',});
+    std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
+    REQUIRE(api.to_bytes() == bytes);
 }
