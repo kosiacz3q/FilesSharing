@@ -6,15 +6,16 @@
 #include <mutex>
 #include <atomic>
 
-class ClientSockerManager {
+class ClientSocketManager {
 public:
-    ClientSockerManager(ClientSocket&& socket);
-    ~ClientSockerManager();
+    ClientSocketManager(ClientSocket&& socket);
+    ~ClientSocketManager();
 
     bool isOutgoingBufferEmpty();
     bool isIncomingBufferEmpty();
     std::vector<char> pop();
     void push(std::vector<char> payload);
+    void stop();
 
 private:
 
@@ -24,6 +25,7 @@ private:
     std::vector<std::vector<char>> mOutgoingBuffer;
     std::mutex mIncomingMutex;
     std::mutex mOutgoingMutex;
+    std::mutex mSocketMutex;
     std::atomic<bool> mStop{false};
     ClientSocket mSocket;
 };

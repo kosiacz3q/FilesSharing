@@ -5,28 +5,27 @@
 
 #include "utils.h"
 
-ClientSockerManager::ClientSockerManager(ClientSocket&& socket)
+ClientSocketManager::ClientSocketManager(ClientSocket&& socket)
     : mSocket(std::move(socket)) {
     assert(mSocket.isValid());
-    std::thread t([&] { loop(); });
-    t.detach();
+    loop();
 }
 
-ClientSockerManager::~ClientSockerManager() {
-    mStop.store(false);
+ClientSocketManager::~ClientSocketManager() {
+    stop();
 }
 
-bool ClientSockerManager::isOutgoingBufferEmpty() {
+bool ClientSocketManager::isOutgoingBufferEmpty() {
     mutex_guard _(mOutgoingMutex);
     return mOutgoingBuffer.empty();
 }
 
-bool ClientSockerManager::isIncomingBufferEmpty() {
+bool ClientSocketManager::isIncomingBufferEmpty() {
     mutex_guard _(mIncomingMutex);
     return mIncomingBuffer.empty();
 }
 
-std::vector<char> ClientSockerManager::pop() {
+std::vector<char> ClientSocketManager::pop() {
     mutex_guard _(mIncomingMutex);
     assert(!mIncomingBuffer.empty());
     auto res = mIncomingBuffer.front();
@@ -34,27 +33,46 @@ std::vector<char> ClientSockerManager::pop() {
     return res;
 }
 
-void ClientSockerManager::push(std::vector<char> payload) {
+void ClientSocketManager::push(std::vector<char> payload) {
     mutex_guard _(mOutgoingMutex);
     mOutgoingBuffer.push_back(std::move(payload));
 }
 
-void ClientSockerManager::loop() {
-    while (!mStop) {
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(5ms);
-        {
-            mutex_guard _(mOutgoingMutex);
-            if (!mOutgoingBuffer.empty()) {
-                bool res = mSocket.send(mOutgoingBuffer.front());
-                (void) res;
-                mOutgoingBuffer.erase(mOutgoingBuffer.begin());
+void ClientSocketManager::stop() {
+    mStop.store(true);
+}
+
+
+void ClientSocketManager::loop() {
+    using namespace std::chrono_literals;
+    std::thread sender([&]{
+       while (!mStop) {
+           {
+               std::lock(mOutgoingMutex, mSocketMutex);
+               mutex_guard _1(mOutgoingMutex, std::adopt_lock);
+               mutex_guard _2(mSocketMutex, std::adopt_lock);
+               if (!mOutgoingBuffer.empty()) {
+                   bool res = mSocket.send(mOutgoingBuffer.front());
+                   (void) res;
+                   mOutgoingBuffer.erase(mOutgoingBuffer.begin());
+               }
+           }
+           std::this_thread::sleep_for(5ms);
+       }
+    });
+    sender.detach();
+
+    std::thread receiver([&]{
+        while (!mStop) {
+            {
+                std::lock(mIncomingMutex, mSocketMutex);
+                mutex_guard _1(mIncomingMutex, std::adopt_lock);
+                mutex_guard _2(mSocketMutex, std::adopt_lock);
+                auto res = mSocket.receive();
+                if (res) mIncomingBuffer.push_back(*res);
             }
+            std::this_thread::sleep_for(5ms);
         }
-        {
-            mutex_guard _(mIncomingMutex);
-            auto res = mSocket.receive();
-            if (res) mIncomingBuffer.push_back(*res);
-        }
-    }
+    });
+    receiver.detach();
 }
