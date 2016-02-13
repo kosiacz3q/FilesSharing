@@ -32,3 +32,4 @@ private:
     uint32_t mID = 0;
     std::vector<char> mPayload;
 };
+

@@ -17,21 +17,11 @@ TEST_CASE("Bytification of ints", "[to_byte]") {
 TEST_CASE("Debytification of ints", "[from_byte]") {
     std::vector<char> bytes{0, 0, 0, 0};
     int i;
-    from_bytes(i, bytes.begin());
+    from_bytes(bytes.begin(), bytes.end(), i);
     REQUIRE(i == 0);
 
     bytes = std::vector<char>{char(0xDD), char(0xCC), char(0xBB), char(0xAA)};
-    from_bytes(i, bytes.begin());
-    REQUIRE(i == 0xAABBCCDD);
-}
-
-TEST_CASE("Debytification of ints p.2", "[from_byte]") {
-    std::vector<char> bytes{0, 0, 0, 0};
-    auto i = from_bytes<int>(bytes.begin(), bytes.end());
-    REQUIRE(i == 0);
-
-    bytes = std::vector<char>{char(0xDD), char(0xCC), char(0xBB), char(0xAA)};
-    i = from_bytes<int>(bytes.begin(), bytes.end());
+    from_bytes(bytes.begin(), bytes.end(), i);
     REQUIRE(i == 0xAABBCCDD);
 }
 
@@ -59,7 +49,6 @@ TEST_CASE("Api construction with payload", "[api]") {
 }
 
 TEST_CASE("Api construction with bytes", "[api]") {
-
     std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
     Api api(bytes);
     REQUIRE(api.getType() == 0);
@@ -69,7 +58,7 @@ TEST_CASE("Api construction with bytes", "[api]") {
 }
 
 TEST_CASE("Api bytification", "[api]") {
-    Api api(0, 1, 2, {'a', 'p', 'i',});
+    Api api(0, 1, 2, {'a', 'p', 'i'});
     std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
     REQUIRE(api.to_bytes() == bytes);
 }
