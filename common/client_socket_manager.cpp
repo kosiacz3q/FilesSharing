@@ -26,7 +26,7 @@ bool ClientSocketManager::isIncomingBufferEmpty() {
 
 std::vector<char> ClientSocketManager::pop() {
     mutex_guard _(mContext->mIncomingMutex);
-    assert(!mIncomingBuffer.empty());
+    assert(!mContext->mIncomingBuffer.empty());
     auto res = mContext->mIncomingBuffer.front();
     mContext->mIncomingBuffer.erase(mContext->mIncomingBuffer.begin());
     return res;
