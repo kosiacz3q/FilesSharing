@@ -7,6 +7,8 @@
 #include <mutex>
 #include <utility>
 #include <tuple>
+#include <algorithm>
+#include <core/string_view.hpp>
 
 inline std::vector<char> join_vectors(const std::vector<std::reference_wrapper<
         const std::vector<char>>>& list) {
@@ -21,6 +23,13 @@ std::vector<char> to_bytes_impl(const T& payload) {
     static_assert(std::is_trivially_copyable<T>(), "");
     std::vector<char> buffer(sizeof(payload));
     memcpy(buffer.data(), (const void*) &payload, sizeof(payload));
+    return buffer;
+}
+
+inline std::vector<char> to_bytes_impl(core::string_view text) {
+    std::vector<char> buffer(text.size() + 1);
+    std::copy(text.begin(), text.end(), buffer.begin());
+    buffer.back() = '\0';
     return buffer;
 }
 

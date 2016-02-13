@@ -4,7 +4,8 @@
 #include <iostream>
 
 Api::Api(const std::vector<char>& bytes) {
-    auto it = from_bytes(bytes.begin(), bytes.end(), mType, mStatus, mID);
+    uint32_t payload_size;
+    auto it = from_bytes(bytes.begin(), bytes.end(), mType, mStatus, mID, payload_size);
     mPayload = std::vector<char>(it, bytes.end());
 }
 
@@ -16,10 +17,15 @@ std::string Api::to_string() const {
 }
 
 std::vector<char> Api::to_bytes() const {
-    auto temp = ::to_bytes(mType, mStatus, mID);
+    uint32_t size(mPayload.size());
+    auto temp = ::to_bytes(mType, mStatus, mID, size);
     return join_vectors({temp, mPayload});
 }
 
 void Api::dump() const {
     std::cerr << to_string() << "\n";
+}
+
+void Api::setPayload(std::vector<char> payload) {
+    mPayload = std::move(payload);
 }
