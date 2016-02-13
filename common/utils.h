@@ -65,8 +65,7 @@ IT from_bytes(IT begin, IT end, First& first, Rest&... rest) {
     assert(begin < end);
     (void) end;
     from_bytes_impl(first, begin);
-    (void) from_bytes(begin + sizeof(First)/sizeof(*begin), end, rest...);
-    return begin + total_bytes/(sizeof(*begin));
+    return from_bytes(begin + sizeof(First)/sizeof(*begin), end, rest...);
 };
 
 template<bool V, typename True, typename False>
