@@ -3,6 +3,7 @@
 
 #include "../common/utils.h"
 #include "../common/api.h"
+#include "../common/client_api.h"
 
 TEST_CASE("Bytification of ints", "[to_byte]") {
     int i = 0;
@@ -61,4 +62,19 @@ TEST_CASE("Api bytification", "[api]") {
     Api api(0, 1, 2, {'a', 'p', 'i'});
     std::vector<char> bytes = {0, 1, 2, 0, 0, 0, 'a', 'p', 'i'};
     REQUIRE(api.to_bytes() == bytes);
+}
+
+TEST_CASE("GetTime construction", "[api]") {
+    GetTime gt(123);
+    std::vector<char> bytes = {32, 0, 123, 0, 0, 0};
+    REQUIRE(gt.to_bytes() == bytes);
+}
+
+TEST_CASE("GetTime from bytes", "[api]") {
+    std::vector<char> bytes = {32, 0, 21, 0, 0, 0};
+    GetTime gt(bytes);
+    REQUIRE(gt.getType() == 32);
+    REQUIRE(gt.getStatus() == 0);
+    REQUIRE(gt.getID() == 21);
+    REQUIRE(gt.getName() == "GetTime");
 }

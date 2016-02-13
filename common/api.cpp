@@ -10,8 +10,8 @@ Api::Api(const std::vector<char>& bytes) {
 
 std::string Api::to_string() const {
     std::ostringstream oss;
-    oss << "Api. type:\t" << mType << " status:\t" << mStatus << " it:\t" << mID;
-    oss << " size:\t" << mPayload.size();
+    oss << "Api:\t" <<  getName() << " type:\t" << mType << " status:\t" << mStatus;
+    oss << " it:\t" << mID << " size:\t" << mPayload.size();
     return oss.str();
 }
 

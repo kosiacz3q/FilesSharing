@@ -64,6 +64,7 @@ IT from_bytes(IT begin, IT end, First& first, Rest&... rest) {
     assert((char*) &*end - (char*) &*begin >= total_bytes);
     assert(begin < end);
     (void) end;
+    (void) total_bytes;
     from_bytes_impl(first, begin);
     return from_bytes(begin + sizeof(First)/sizeof(*begin), end, rest...);
 };

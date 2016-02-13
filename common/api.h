@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <memory>
+#include <core/string_view.hpp>
 #include "common/utils.h"
 
 class Api {
@@ -20,6 +21,7 @@ public:
     virtual std::string to_string() const;
     virtual std::vector<char> to_bytes() const;
     virtual void dump() const;
+    virtual core::string_view getName() const { return "Api"; }
 
     auto getType() const { return mType; }
     auto getStatus() const { return mStatus; }
