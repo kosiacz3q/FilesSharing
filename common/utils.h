@@ -8,12 +8,14 @@
 
 template<typename T>
 std::vector<char> to_bytes(const T& payload) {
+    static_assert(std::is_trivially_copyable<T>(), "");
     std::vector<char> buffer(sizeof(payload));
     memcpy(buffer.data(), (const void*) &payload, sizeof(payload));
 }
 
 template<typename T>
 T from_bytes(const std::vector<char>& buffer) {
+    static_assert(std::is_trivially_copyable<T>(), "");
     assert(buffer.size() == sizeof(T));
     T t;
     memcpy(&t, buffer.data(), buffer.size());
