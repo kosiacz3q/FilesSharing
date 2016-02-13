@@ -5,6 +5,7 @@
 #include <cassert>
 #include <type_traits>
 #include <mutex>
+#include <utility>
 
 template<typename T>
 std::vector<char> to_bytes(const T& payload) {
@@ -18,7 +19,7 @@ template<typename T, typename IT>
 T from_bytes(IT begin, IT end) {
     static_assert(std::is_trivially_copyable<T>(), "");
     static_assert(std::is_default_constructible<T>(), "");
-    assert((char*) end - (char*) begin == sizeof(T));
+    assert((char*) &*end - (char*) &*begin == sizeof(T));
     (void) end;
     T t;
     memcpy(&t, &*begin, sizeof(T));
@@ -32,12 +33,11 @@ void from_bytes(T& t, IT begin) {
     memcpy(&t, &*begin, sizeof(T));
 };
 
-inline std::vector<char> join_vectors(const std::vector<const std::vector<char>*>& list) {
+inline std::vector<char> join_vectors(const std::vector<std::reference_wrapper<
+                                                            const std::vector<char>>>& list) {
     std::vector<char> result;
-    for (auto& x : list) {
-        assert(x);
-        result.insert(result.end(), x->begin(), x->end());
-    }
+    for (auto& x : list)
+        result.insert(result.end(), x.get().begin(), x.get().end());
     return result;
 }
 

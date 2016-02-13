@@ -25,7 +25,7 @@ std::vector<char> Api::to_bytes() const {
     auto type = ::to_bytes(mType);
     auto status = ::to_bytes(mStatus);
     auto id = ::to_bytes(mID);
-    return join_vectors({&type, &status, &id, &mPayload});
+    return join_vectors({type, status, id, mPayload});
 }
 
 void Api::dump() const {
