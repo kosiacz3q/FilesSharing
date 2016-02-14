@@ -123,7 +123,7 @@ std::unique_ptr<T_DEST, Deleter> unique_cast(std::unique_ptr<T_SRC, Deleter> src
 }
 
 template<typename T>
-struct DebugTypeTeller; // no impl - substitution always fail
+struct DebugTypeTeller; // no impl - substitution always fails
 
 template<typename T>
 void debugTellType(T) {
