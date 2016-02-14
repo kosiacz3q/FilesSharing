@@ -122,20 +122,16 @@ std::unique_ptr<T_DEST, Deleter> unique_cast(std::unique_ptr<T_SRC, Deleter> src
     return std::unique_ptr<T_DEST, Deleter>(dest_ptr);
 }
 
-
 template<typename T>
 struct DebugTypeTeller; // no impl - substitution always fail
 
-
 template<typename T>
-void debugTellType(T)
-{
+void debugTellType(T) {
     DebugTypeTeller<T> t;
     (void) t;
 }
 template<typename T>
-void debugTellType()
-{
+void debugTellType() {
     DebugTypeTeller<T> t;
     (void) t;
 }
