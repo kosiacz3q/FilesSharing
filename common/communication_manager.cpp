@@ -1,4 +1,5 @@
 #include "communication_manager.h"
+#include "client_api.h"
 
 void CommunicationManager::send(const Api& message) {
     mSocketManager.push(message.to_bytes());
@@ -7,12 +8,23 @@ void CommunicationManager::send(const Api& message) {
 std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
     while (!mSocketManager.isIncomingBufferEmpty()) {
         auto message = mSocketManager.pop();
-        mIncoming.emplace_back(std::make_unique<Api>(message)); // TODO: finish dynamic type matching
+        Api api(message);
+        const char apiType = api.getType();
+        bool added = false;
+        using Apis = static_for_each<ClientApiList, type_wrapper>;
+        for_each_tuple(Apis{}, [&] (auto x) {
+            using T = typename decltype(x)::type;
+            if (T::type == apiType) {
+                assert(!added && "One message cannot have multiple types");
+                mIncoming.emplace_back(std::make_unique<T>(message));
+                added = true;
+            }
+        });
     }
 
     for (auto it = mIncoming.begin(); it != mIncoming.end(); ++it) {
         if ((*it)->getID() == id) {
-            auto ret = std::make_unique<Api>(std::move(**it));
+            auto ret = std::move(*it);
             mIncoming.erase(it);
             return ret;
         }

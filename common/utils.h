@@ -82,3 +82,32 @@ template<bool V, typename True, typename False>
 using if_t = std::conditional_t<V, True, False>;
 
 using mutex_guard = std::lock_guard<std::mutex>;
+
+template<typename T>
+struct type_wrapper {
+    using type = T;
+};
+
+template <typename Tuple, typename F, std::size_t... Indices>
+void for_each_impl(Tuple&& tuple, F&& f, std::index_sequence<Indices...>) {
+    using swallow = int[];
+    (void) swallow{1, (f(std::get<Indices>(std::forward<Tuple>(tuple))), void(), 0)...};
+}
+
+template <typename Tuple, typename F>
+void for_each_tuple(Tuple&& tuple, F&& f) {
+    constexpr std::size_t N = std::tuple_size<std::remove_reference_t<Tuple>>::value;
+    for_each_impl(std::forward<Tuple>(tuple), std::forward<F>(f),
+                  std::make_index_sequence<N>{});
+}
+
+template<typename, template<typename> class>
+struct static_for_each_impl;
+
+template<typename... Ts, template<typename> class F>
+struct static_for_each_impl<std::tuple<Ts...>, F> {
+    using type = std::tuple<F<Ts>...>;
+};
+
+template<typename T, template<typename> class F>
+using static_for_each = typename static_for_each_impl<T, F>::type;
