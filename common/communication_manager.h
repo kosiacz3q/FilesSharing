@@ -12,7 +12,12 @@ public:
     void send(const Api& message);
     std::unique_ptr<Api> receive(uint32_t id);
     template<typename T>
-    T receive(uint32_t id);
+    T receive(uint32_t id) {
+        auto res = receive(id);
+        assert(res);
+        assert(res->getType() == T::type);
+        return *unique_cast<Api, T>(std::move(res));
+    }
 
 private:
     ClientSocketManager mSocketManager;

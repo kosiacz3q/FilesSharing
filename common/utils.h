@@ -8,6 +8,7 @@
 #include <utility>
 #include <tuple>
 #include <algorithm>
+#include <memory>
 #include <core/string_view.hpp>
 
 inline std::vector<char> join_vectors(const std::vector<std::reference_wrapper<
@@ -111,3 +112,13 @@ struct static_for_each_impl<std::tuple<Ts...>, F> {
 
 template<typename T, template<typename> class F>
 using static_for_each = typename static_for_each_impl<T, F>::type;
+
+template <class T_SRC, class T_DEST>
+std::unique_ptr<T_DEST> unique_cast(std::unique_ptr<T_SRC>&& src) {
+    if (!src) return std::unique_ptr<T_DEST>();
+
+    T_DEST *dest_ptr = dynamic_cast<T_DEST*>(src.get());
+
+    src.release();
+    return std::unique_ptr<T_DEST>(dest_ptr);
+}
