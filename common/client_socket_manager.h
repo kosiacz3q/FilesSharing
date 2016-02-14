@@ -1,4 +1,7 @@
-#pragma once
+#pragma oncedecltype(comparision)
+
+#ifndef client_socket_manager_H
+#define client_socket_manager_H
 
 #include "client_socket.h"
 #include <vector>
@@ -36,3 +39,5 @@ private:
     };
     std::shared_ptr<Context> mContext;
 };
+
+#endif //client_socket_manager_H
