@@ -12,7 +12,7 @@
 #include <initializer_list>
 #include <core/string_view.hpp>
 
-inline std::vector<char> join_vectors(const std::initializer_list<std::vector<char>> list) {
+inline std::vector<char> join_vectors(std::initializer_list<std::vector<char>> list) {
     std::vector<char> result;
     for (auto& x : list)
         result.insert(result.end(), x.begin(), x.end());
