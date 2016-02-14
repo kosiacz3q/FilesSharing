@@ -1,10 +1,12 @@
 #pragma once
 
+#include <tuple>
 #include "common/api.h"
 
 class GetTime : public Api {
-    static constexpr char type = 32;
 public:
+    static constexpr char type = 32;
+
     GetTime(uint32_t id) : Api(type, 0, id) {}
     GetTime(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
@@ -14,8 +16,9 @@ public:
 };
 
 class GetFileList : public Api {
-    static constexpr char type = 34;
 public:
+    static constexpr char type = 34;
+
     GetFileList(uint32_t id) : Api(type, 0, id) {}
     GetFileList(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
@@ -25,8 +28,9 @@ public:
 };
 
 class GetFileByPath : public Api {
-    static constexpr char type = 36;
 public:
+    static constexpr char type = 36;
+
     GetFileByPath(uint32_t id, core::string_view path)
             : Api(type, 0, id), mPath(path) {
         setPayload(::to_bytes(path));
@@ -48,4 +52,6 @@ public:
 private:
     std::string mPath;
 };
+
+using ClientApiList = std::tuple<GetTime, GetFileList, GetFileByPath>;
 

@@ -8,6 +8,7 @@ set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3")
 set(SOURCE_FILES 
 				 ../common/client_socket.cpp
 				 ../common/client_socket_manager.cpp
+				 ../common/communication_manager.cpp
 				 ../common/api.cpp
 				 )
 add_executable(client ${SOURCE_FILES} client.cpp)
