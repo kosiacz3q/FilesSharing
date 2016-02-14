@@ -113,12 +113,29 @@ struct static_for_each_impl<std::tuple<Ts...>, F> {
 template<typename T, template<typename> class F>
 using static_for_each = typename static_for_each_impl<T, F>::type;
 
-template <class T_SRC, class T_DEST>
-std::unique_ptr<T_DEST> unique_cast(std::unique_ptr<T_SRC>&& src) {
-    if (!src) return std::unique_ptr<T_DEST>();
+template <typename T_DEST, typename T_SRC, typename Deleter>
+std::unique_ptr<T_DEST, Deleter> unique_cast(std::unique_ptr<T_SRC, Deleter> src) {
+    if (!src) return nullptr;
 
-    T_DEST *dest_ptr = dynamic_cast<T_DEST*>(src.get());
-
+    T_DEST* dest_ptr = dynamic_cast<T_DEST*>(src.get());
     src.release();
-    return std::unique_ptr<T_DEST>(dest_ptr);
+    return std::unique_ptr<T_DEST, Deleter>(dest_ptr);
+}
+
+
+template<typename T>
+struct DebugTypeTeller; // no impl - substitution always fail
+
+
+template<typename T>
+void debugTellType(T)
+{
+    DebugTypeTeller<T> t;
+    (void) t;
+}
+template<typename T>
+void debugTellType()
+{
+    DebugTypeTeller<T> t;
+    (void) t;
 }

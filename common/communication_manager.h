@@ -16,7 +16,7 @@ public:
         auto res = receive(id);
         assert(res);
         assert(res->getType() == T::type);
-        return *unique_cast<Api, T>(std::move(res));
+        return *unique_cast<T>(std::move(res));
     }
 
 private:
