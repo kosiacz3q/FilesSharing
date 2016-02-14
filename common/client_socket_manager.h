@@ -29,7 +29,6 @@ private:
 
         std::mutex mIncomingMutex;
         std::mutex mOutgoingMutex;
-        std::mutex mSocketMutex;
         std::atomic<bool> mStop{false};
 
         ClientSocket mSocket;

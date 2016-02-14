@@ -44,34 +44,25 @@ void ClientSocketManager::stop() {
 
 void ClientSocketManager::loop() {
     using namespace std::chrono_literals;
-    std::thread sender([ctx = mContext]{
+    std::thread looper([ctx = mContext]{
        while (!ctx->mStop) {
            {
-               std::lock(ctx->mOutgoingMutex, ctx->mSocketMutex);
-               mutex_guard _1(ctx->mOutgoingMutex, std::adopt_lock);
-               mutex_guard _2(ctx->mSocketMutex, std::adopt_lock);
-               if (!ctx->mOutgoingBuffer.empty()) {
-                   bool res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
-                   (void) res;
-                   ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
+               {
+                   mutex_guard _(ctx->mOutgoingMutex);
+                   if (!ctx->mOutgoingBuffer.empty()) {
+                       bool res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
+                       (void) res;
+                       ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
+                   }
+               }
+               {
+                   mutex_guard _(ctx->mIncomingMutex);
+                   auto res = ctx->mSocket.receive();
+                   if (res) ctx->mIncomingBuffer.push_back(*res);
                }
            }
            std::this_thread::sleep_for(5ms);
        }
     });
-    sender.detach();
-
-    std::thread receiver([ctx = mContext]{
-        while (!ctx->mStop) {
-            {
-                std::lock(ctx->mIncomingMutex, ctx->mSocketMutex);
-                mutex_guard _1(ctx->mIncomingMutex, std::adopt_lock);
-                mutex_guard _2(ctx->mSocketMutex, std::adopt_lock);
-                auto res = ctx->mSocket.receive();
-                if (res) ctx->mIncomingBuffer.push_back(*res);
-            }
-            std::this_thread::sleep_for(5ms);
-        }
-    });
-    receiver.detach();
+    looper.detach();
 }
