@@ -9,13 +9,13 @@
 #include <tuple>
 #include <algorithm>
 #include <memory>
+#include <initializer_list>
 #include <core/string_view.hpp>
 
-inline std::vector<char> join_vectors(const std::vector<std::reference_wrapper<
-        const std::vector<char>>>& list) {
+inline std::vector<char> join_vectors(std::initializer_list<std::vector<char>> list) {
     std::vector<char> result;
     for (auto& x : list)
-        result.insert(result.end(), x.get().begin(), x.get().end());
+        result.insert(result.end(), x.begin(), x.end());
     return result;
 }
 
@@ -130,6 +130,7 @@ void debugTellType(T) {
     DebugTypeTeller<T> t;
     (void) t;
 }
+
 template<typename T>
 void debugTellType() {
     DebugTypeTeller<T> t;
