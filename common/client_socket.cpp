@@ -84,3 +84,7 @@ core::optional<std::vector<char>> ClientSocket::receive() {
 
     return std::vector<char>(mReceiveBuffer.begin(), mReceiveBuffer.begin() + res);
 }
+
+int ClientSocket::getSocketFd() const{
+    return mSocketDesc;
+}

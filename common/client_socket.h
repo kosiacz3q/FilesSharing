@@ -24,6 +24,8 @@ public:
     core::optional<size_t> send(const std::vector<char>& payload);
     core::optional<size_t> send(const void* payload, size_t size);
     core::optional<std::vector<char>> receive();
+    
+    int getSocketFd() const;
 
 private:
     enum class Mode { Invalid, Initialized } mMode = Mode::Invalid;

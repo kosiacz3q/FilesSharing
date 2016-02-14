@@ -17,6 +17,7 @@ public:
     std::vector<char> pop();
     void push(std::vector<char> payload);
     void stop();
+    int getClientId() const;
 
 private:
     void loop();

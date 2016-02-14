@@ -68,3 +68,7 @@ void ClientSocketManager::loop() {
     });
     looper.detach();
 }
+
+int ClientSocketManager::getClientId() const{
+    return mContext->mSocket.getSocketFd();
+}
