@@ -1,5 +1,14 @@
 #include "ServerSocket.h"
 
+static bool SetSocketBlockingEnabled(int fd, bool blocking) {
+    if (fd < 0) return false;
+
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags < 0) return false;
+    flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+    return fcntl(fd, F_SETFL, flags) == 0;
+}
+
 ServerSocket::ServerSocket(const int port) {
 
     socketFd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -12,6 +21,11 @@ ServerSocket::ServerSocket(const int port) {
 
     if (bind(socketFd, (struct sockaddr *) &mServer, sizeof(mServer)) < 0) {
         perror("ERROR on binding");
+        return;
+    }
+
+    if (!SetSocketBlockingEnabled(socketFd, false)) {
+        perror("Could not set non-blocking");
         return;
     }
 
