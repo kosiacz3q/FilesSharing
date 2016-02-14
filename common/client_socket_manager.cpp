@@ -50,9 +50,11 @@ void ClientSocketManager::loop() {
                {
                    mutex_guard _(ctx->mOutgoingMutex);
                    if (!ctx->mOutgoingBuffer.empty()) {
-                       bool res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
-                       (void) res;
-                       ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
+                       auto res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
+                       if (res) {
+                           assert(*res == ctx->mOutgoingBuffer.front().size());
+                           ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
+                       }
                    }
                }
                {

@@ -61,18 +61,18 @@ ClientSocket& ClientSocket::operator=(ClientSocket&& other) {
     return *this;
 }
 
-bool ClientSocket::send(const void* payload, size_t size) {
+core::optional<size_t> ClientSocket::send(const void* payload, size_t size) {
     if (!isValid()) return false;
-
-    if (::send(mSocketDesc, payload, size, 0) < 0) {
+    int res;
+    if ((res = ::send(mSocketDesc, payload, size, 0)) < 0) {
         perror("Could not sent");
-        return false;
+        return core::nullopt;
     }
 
-    return  true;
+    return size_t(res);
 }
 
-bool ClientSocket::send(const std::vector<char>& payload) {
+core::optional<size_t> ClientSocket::send(const std::vector<char>& payload) {
     return send(payload.data(), payload.size());
 }
 

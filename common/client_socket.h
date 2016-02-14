@@ -21,8 +21,8 @@ public:
     ~ClientSocket();
 
     bool isValid() const { return mMode == Mode::Initialized; }
-    bool send(const std::vector<char>& payload);
-    bool send(const void* payload, size_t size);
+    core::optional<size_t> send(const std::vector<char>& payload);
+    core::optional<size_t> send(const void* payload, size_t size);
     core::optional<std::vector<char>> receive();
 
 private:
