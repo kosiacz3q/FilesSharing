@@ -36,3 +36,5 @@ private:
     };
     std::shared_ptr<Context> mContext;
 };
+
+typedef std::shared_ptr<ClientSocketManager> ClientSocketManagerPtr;
