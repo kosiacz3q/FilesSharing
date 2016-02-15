@@ -10,7 +10,7 @@
 class ServerManager {
 public:
 
-    ServerManager(ServerSocketPtr serverSocket);
+    ServerManager(ServerSocketPtr serverSocket, ActionsContainerPtr actionsContainer);
 
     ~ServerManager();
 
@@ -24,10 +24,11 @@ private:
 
     int pollFd;
 
-    void messageLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd);
+    void connectingLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd);
 
     RuntimeContextPtr context;
     ServerSocketPtr serverSocket;
+    ActionsContainerPtr actionsContainer;
 };
 
 

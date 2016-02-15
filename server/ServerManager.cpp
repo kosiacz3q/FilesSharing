@@ -1,12 +1,12 @@
 #include <thread>
 
-
 #include "ServerManager.h"
 
-
-ServerManager::ServerManager(ServerSocketPtr serverSocket)
+ServerManager::ServerManager(ServerSocketPtr serverSocket,
+                             ActionsContainerPtr actionsContainer)
     :context(std::make_shared<RuntimeContext>()),
-     serverSocket(serverSocket){
+     serverSocket(serverSocket),
+     actionsContainer(actionsContainer){
 
 }
 
@@ -29,7 +29,7 @@ void ServerManager::start() {
 
     context->start();
 
-    std::thread st(&ServerManager::messageLoop, this, context, pollFd, serverSocket->getSocketFd());
+    std::thread st(&ServerManager::connectingLoop, this, context, pollFd, serverSocket->getSocketFd());
 
     st.detach();
 }
@@ -63,12 +63,12 @@ void ServerManager::close() {
     context->clientsManager->disconectAll();
 }
 
-void ServerManager::messageLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd) {
+void ServerManager::connectingLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd) {
 
     const int maxPendingEventsCount = 64;
 
     thread_local int countOfEvents;
-    epoll_event* events = new epoll_event[maxPendingEventsCount];
+    thread_local epoll_event* events = new epoll_event[maxPendingEventsCount];
 
     sCtx->messageLoopState = ServerState::RUNNING;
 
@@ -94,8 +94,8 @@ void ServerManager::messageLoop(RuntimeContextPtr sCtx, const int pollFd, const 
             else if (events[i].data.fd == serverSocketFd)
             {
                 printf("Accepting new connection\n");
-                sockaddr in_addr;
-                socklen_t in_len = sizeof(in_addr);
+                thread_local sockaddr in_addr;
+                thread_local socklen_t in_len = sizeof(in_addr);
 
                 char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 
@@ -109,7 +109,9 @@ void ServerManager::messageLoop(RuntimeContextPtr sCtx, const int pollFd, const 
 
                         ClientSocket ss(infd, std::stoi(sbuf), hbuf);
 
-                        sCtx->clientsManager->AddClient(std::make_shared<CommunicationManager>(std::move(ss)));
+                        sCtx->clientsManager->AddClient(
+                                std::make_shared<ClientHandler>(
+                                       std::make_shared<CommunicationManager>(std::move(ss)), actionsContainer));
                     }
                 };
             }else{

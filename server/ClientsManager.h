@@ -5,6 +5,7 @@
 #include <set>
 
 #include "common/communication_manager.h"
+#include "ClientHandler.h"
 
 class ClientsManager {
 
@@ -12,7 +13,7 @@ public:
 
     ClientsManager();
 
-    void AddClient(CommunicationManagerPtr newClient);
+    void AddClient(ClientHandlerPtr newClient);
 
     void removeClient(const int clientId);
 
@@ -21,7 +22,7 @@ public:
 private:
 
     std::mutex exlusiveClientsListAccess;
-    std::set<CommunicationManagerPtr, bool (*)(const CommunicationManagerPtr&, const CommunicationManagerPtr&)> clients;
+    std::set<ClientHandlerPtr, bool (*)(const ClientHandlerPtr&, const ClientHandlerPtr&)> clients;
 };
 
 typedef std::shared_ptr<ClientsManager> ClientsManagerPtr;

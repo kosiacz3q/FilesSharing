@@ -1,13 +1,13 @@
 #include "ClientsManager.h"
 
-auto comparision = [](const CommunicationManagerPtr& x,const CommunicationManagerPtr& y){ return x->getId() < y->getId(); };
+auto comparision = [](const ClientHandlerPtr& x,const ClientHandlerPtr& y){ return x->getId() < y->getId(); };
 
 ClientsManager::ClientsManager()
-    :clients(std::set<CommunicationManagerPtr, bool (*)(const CommunicationManagerPtr&, const CommunicationManagerPtr&)>(comparision)){
+    :clients(std::set<ClientHandlerPtr, bool (*)(const ClientHandlerPtr&, const ClientHandlerPtr&)>(comparision)){
 
 }
 
-void ClientsManager::AddClient(CommunicationManagerPtr newClient) {
+void ClientsManager::AddClient(ClientHandlerPtr newClient) {
 
     mutex_guard  _(exlusiveClientsListAccess);
 

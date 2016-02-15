@@ -26,7 +26,7 @@ set(SOURCE_FILES
         ../common/client_socket_manager.cpp
 	../common/communication_manager.cpp
 	../common/api.cpp
-)
+        ClientHandler.cpp ClientHandler.h Actions/IAction.h Actions/ActionsContainer.cpp Actions/ActionsContainer.h Actions/SendTimeStamp.cpp Actions/SendTimeStamp.h)
 
 add_executable(server ${SOURCE_FILES} server.cpp)
 
