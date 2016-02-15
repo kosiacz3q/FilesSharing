@@ -18,3 +18,12 @@ void RuntimeContext::close() {
 ServerState RuntimeContext::getState() const {
     return state;
 }
+
+void RuntimeContext::start() {
+    if (state == ServerState::RUNNING){
+        perror("Server is already running");
+        return;
+    }
+
+    state = ServerState::RUNNING;
+}

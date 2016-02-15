@@ -24,6 +24,8 @@ set(SOURCE_FILES
 
 	../common/client_socket.cpp
         ../common/client_socket_manager.cpp
+	../common/communication_manager.cpp
+	../common/api.cpp
 )
 
 add_executable(server ${SOURCE_FILES} server.cpp)

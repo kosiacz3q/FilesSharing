@@ -3,24 +3,26 @@
 #include <algorithm>
 
 #include <common/utils.h>
+#include <common/communication_manager.h>
 
-
-auto comparision = [](const ClientSocketManager& x,const ClientSocketManager& y){ return x.getClientId() < y.getClientId(); };
+auto comparision = [](const CommunicationManagerPtr& x,const CommunicationManagerPtr& y){ return x->getId() < y->getId(); };
 
 ClientsManager::ClientsManager()
-    :clients(std::set<ClientSocketManager, bool (*)(const ClientSocketManager&, const ClientSocketManager&)>(comparision)){
+    :clients(std::set<CommunicationManagerPtr, bool (*)(const CommunicationManagerPtr&, const CommunicationManagerPtr&)>(comparision)){
 
 }
 
-void ClientsManager::AddClient(const int socketFd) {
+void ClientsManager::AddClient(CommunicationManagerPtr newClient) {
 
     mutex_guard  _(exlusiveClientsListAccess);
+
+    clients.insert(newClient);
 }
 
 void ClientsManager::removeClient(const int clientId) {
     mutex_guard  _(exlusiveClientsListAccess);
 
-    auto f = std::lower_bound(clients.begin(), clients.end(), clientId, [](const auto& item, const int r){return item.getClientId() > r;});
+    auto f = std::lower_bound(clients.begin(), clients.end(), clientId, [](const auto& item, const int r){return item->getId() < r;});
 
     if (f == clients.end()){
         perror("Cannot remove non existing client");
@@ -33,7 +35,5 @@ void ClientsManager::removeClient(const int clientId) {
 void ClientsManager::disconectAll() {
     mutex_guard  _(exlusiveClientsListAccess);
 
-    for(auto clientManager : clients){
-        clientManager.stop();
-    }
+    clients.clear();
 }

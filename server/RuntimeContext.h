@@ -1,7 +1,3 @@
-//
-// Created by lucas on 2/14/16.
-//
-
 #ifndef SERVER_RUNTIMECONTEXT_H
 #define SERVER_RUNTIMECONTEXT_H
 
@@ -27,6 +23,7 @@ public:
     ServerState getState () const;
 
     void close();
+    void start();
 
     ClientsManagerPtr clientsManager;
     std::atomic<ServerState> messageLoopState;

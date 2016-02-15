@@ -29,31 +29,23 @@ ServerSocket::ServerSocket(const int port) {
         return;
     }
 
+    if (listen(socketFd, SOMAXCONN) == -1){
+        perror("Could not start listening on socket");
+        exit(-32);
+    }
+
     mMode = Mode::Initialized;
 }
-/*
-core::optional<ClientSocketManager> ServerSocket::GetNextClient() {
-
-    constexpr int maxNumberOfPendingConnections = 100;
-    listen(socketFd, maxNumberOfPendingConnections);
-
-    sockaddr_in newClientAdd;
-    socklen_t len = sizeof(sockaddr_in);
-    if (auto f = accept(socketFd, (sockaddr*)&newClientAdd, &len) > 0){
-        perror("Client connected successfully");
-        close(f);
-    };
-
-    return core::optional<ClientSocketManager>();
-}*/
 
 ServerSocket::~ServerSocket() {
 
-    if (mMode != Mode::Initialized)
+    if (mMode != Mode::Initialized) {
+        printf("Server socket not initialized");
         return;
+    }
 
+    printf("Closing server socket\n");
     close(socketFd);
-
 }
 
 int ServerSocket::getSocketFd() const {

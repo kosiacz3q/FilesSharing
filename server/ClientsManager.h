@@ -4,7 +4,7 @@
 #include <memory>
 #include <set>
 
-#include <common/client_socket_manager.h>
+#include "common/communication_manager.h"
 
 class ClientsManager {
 
@@ -12,7 +12,7 @@ public:
 
     ClientsManager();
 
-    void AddClient(const int socketFd);
+    void AddClient(CommunicationManagerPtr newClient);
 
     void removeClient(const int clientId);
 
@@ -21,7 +21,7 @@ public:
 private:
 
     std::mutex exlusiveClientsListAccess;
-    std::set<ClientSocketManager, bool (*)(const ClientSocketManager&, const ClientSocketManager&)> clients;
+    std::set<CommunicationManagerPtr, bool (*)(const CommunicationManagerPtr&, const CommunicationManagerPtr&)> clients;
 };
 
 typedef std::shared_ptr<ClientsManager> ClientsManagerPtr;

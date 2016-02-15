@@ -11,6 +11,8 @@ int main()
 
     ss.start();
 
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
     ss.close();
 
 	cout << "Hello server\n";
