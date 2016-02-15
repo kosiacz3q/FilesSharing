@@ -1,7 +1,3 @@
-//
-// Created by lucas on 2/14/16.
-//
-
 #include "RuntimeContext.h"
 
 RuntimeContext::RuntimeContext()

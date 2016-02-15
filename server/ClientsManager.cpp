@@ -1,10 +1,5 @@
 #include "ClientsManager.h"
 
-#include <algorithm>
-
-#include <common/utils.h>
-#include <common/communication_manager.h>
-
 auto comparision = [](const CommunicationManagerPtr& x,const CommunicationManagerPtr& y){ return x->getId() < y->getId(); };
 
 ClientsManager::ClientsManager()
