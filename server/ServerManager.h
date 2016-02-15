@@ -2,6 +2,7 @@
 #define SERVER_SERVERMANAGER_H
 
 #include <common/client_socket_manager.h>
+#include <sys/epoll.h>
 
 #include "ServerSocket.h"
 #include "RuntimeContext.h"
@@ -11,13 +12,19 @@ public:
 
     ServerManager(ServerSocketPtr serverSocket);
 
+    ~ServerManager();
+
     void start();
 
     void close();
 
 private:
 
-    void registerEpool();
+    bool registerEpoll();
+
+    int pollFd;
+
+    void messageLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd);
 
     RuntimeContextPtr context;
     ServerSocketPtr serverSocket;

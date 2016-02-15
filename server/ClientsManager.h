@@ -1,8 +1,8 @@
 #ifndef SERVER_CLIENTSMANAGER_H
 #define SERVER_CLIENTSMANAGER_H
 
-#include <list>
 #include <memory>
+#include <set>
 
 #include <common/client_socket_manager.h>
 
@@ -12,12 +12,16 @@ public:
 
     ClientsManager();
 
-    void AddClient();
+    void AddClient(const int socketFd);
 
+    void removeClient(const int clientId);
+
+    void disconectAll();
 
 private:
 
-    std::list<ClientSocketManager> clients;
+    std::mutex exlusiveClientsListAccess;
+    std::set<ClientSocketManager, bool (*)(const ClientSocketManager&, const ClientSocketManager&)> clients;
 };
 
 typedef std::shared_ptr<ClientsManager> ClientsManagerPtr;

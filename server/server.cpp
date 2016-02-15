@@ -13,6 +13,5 @@ int main()
 
     ss.close();
 
-
 	cout << "Hello server\n";
 }

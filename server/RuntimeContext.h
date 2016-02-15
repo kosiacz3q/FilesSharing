@@ -29,9 +29,9 @@ public:
     void close();
 
     ClientsManagerPtr clientsManager;
+    std::atomic<ServerState> messageLoopState;
 
 private:
-
     std::atomic<ServerState> state;
 };
 

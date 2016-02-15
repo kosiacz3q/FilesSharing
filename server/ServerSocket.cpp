@@ -31,7 +31,7 @@ ServerSocket::ServerSocket(const int port) {
 
     mMode = Mode::Initialized;
 }
-
+/*
 core::optional<ClientSocketManager> ServerSocket::GetNextClient() {
 
     constexpr int maxNumberOfPendingConnections = 100;
@@ -45,7 +45,7 @@ core::optional<ClientSocketManager> ServerSocket::GetNextClient() {
     };
 
     return core::optional<ClientSocketManager>();
-}
+}*/
 
 ServerSocket::~ServerSocket() {
 
@@ -54,4 +54,8 @@ ServerSocket::~ServerSocket() {
 
     close(socketFd);
 
+}
+
+int ServerSocket::getSocketFd() const {
+    return socketFd;
 }

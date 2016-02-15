@@ -6,6 +6,7 @@
 
 RuntimeContext::RuntimeContext()
     :clientsManager(std::make_shared<ClientsManager>()),
+     messageLoopState(ServerState::PENDING),
      state(ServerState::PENDING){
 
 }

@@ -16,8 +16,7 @@ public:
 
     ~ServerSocket();
 
-    core::optional<ClientSocketManager> GetNextClient();
-
+    int getSocketFd() const;
 
 private:
 
