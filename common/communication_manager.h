@@ -19,8 +19,12 @@ public:
         return *unique_cast<T>(std::move(res));
     }
 
+    int getId() const;
+
 private:
     ClientSocketManager mSocketManager;
     std::vector<Api> mOutgoing;
     std::vector<std::unique_ptr<Api>> mIncoming;
 };
+
+typedef std::shared_ptr<CommunicationManager> CommunicationManagerPtr;

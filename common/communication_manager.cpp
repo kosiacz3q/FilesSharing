@@ -37,3 +37,7 @@ std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
     }
     return nullptr;
 }
+
+int CommunicationManager::getId() const{
+    return mSocketManager.getClientId();
+}
