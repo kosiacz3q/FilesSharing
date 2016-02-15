@@ -4,8 +4,8 @@
 #include <iostream>
 
 Api::Api(const std::vector<char>& bytes) {
-    uint32_t payload_size;
-    auto it = from_bytes(bytes.begin(), bytes.end(), mType, mStatus, mID, payload_size);
+    uint32_t payloadSize;
+    auto it = from_bytes(bytes.begin(), bytes.end(), mType, mStatus, mID, payloadSize);
     mPayload = std::vector<char>(it, bytes.end());
 }
 
