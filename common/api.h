@@ -34,7 +34,6 @@ public:
     auto getID() const { return mID; }
     const auto& getPayload() const { return mPayload; }
 
-
 private:
     uint8_t mType = 0;
     uint8_t mStatus = 0;
