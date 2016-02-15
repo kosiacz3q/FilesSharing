@@ -12,6 +12,32 @@ void CommunicationManager::send(const Api& message) {
 }
 
 std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
+
+    refreshMessages();
+
+    for (auto it = mIncoming.begin(); it != mIncoming.end(); ++it) {
+        if ((*it)->getID() == id) {
+            auto ret = std::move(*it);
+            mIncoming.erase(it);
+            return ret;
+        }
+    }
+    return nullptr;
+}
+
+std::unique_ptr<Api> CommunicationManager::receiveNext(){
+
+    refreshMessages();
+
+    if (mIncoming.empty())
+        return nullptr;
+
+    auto ret = std::move(*mIncoming.begin());
+    mIncoming.erase(mIncoming.begin());
+    return ret;
+}
+
+void CommunicationManager::refreshMessages(){
     while (!mSocketManager.isIncomingBufferEmpty()) {
         auto message = mSocketManager.pop();
         Api api(message);
@@ -27,15 +53,6 @@ std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
             }
         });
     }
-
-    for (auto it = mIncoming.begin(); it != mIncoming.end(); ++it) {
-        if ((*it)->getID() == id) {
-            auto ret = std::move(*it);
-            mIncoming.erase(it);
-            return ret;
-        }
-    }
-    return nullptr;
 }
 
 int CommunicationManager::getId() const{

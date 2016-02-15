@@ -19,12 +19,18 @@ public:
         return *unique_cast<T>(std::move(res));
     }
 
+    std::unique_ptr<Api> receiveNext();
+
     int getId() const;
 
 private:
+
+    void refreshMessages();
+
     ClientSocketManager mSocketManager;
     std::vector<Api> mOutgoing;
     std::vector<std::unique_ptr<Api>> mIncoming;
+
 };
 
 typedef std::shared_ptr<CommunicationManager> CommunicationManagerPtr;
