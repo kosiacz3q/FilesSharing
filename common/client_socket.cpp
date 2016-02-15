@@ -40,6 +40,21 @@ ClientSocket::ClientSocket(unsigned short port, core::string_view address) {
     mMode = Mode::Initialized;
 }
 
+ClientSocket::ClientSocket(const int socketFd, const unsigned short port, core::string_view address)
+    :mSocketDesc(socketFd){
+
+    mServer.sin_addr.s_addr = inet_addr(address.data());
+    mServer.sin_family = AF_INET;
+    mServer.sin_port = htons(port);
+
+    if (!SetSocketBlockingEnabled(mSocketDesc, false)) {
+        perror("Could not set non-blocking");
+        return;
+    }
+
+    mMode = Mode::Initialized;
+}
+
 ClientSocket::~ClientSocket() {
     if (mMode == Mode::Invalid) return;
     close(mSocketDesc);

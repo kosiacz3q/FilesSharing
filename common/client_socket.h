@@ -12,6 +12,7 @@ class ClientSocket {
     static constexpr size_t receive_buffer_size = 1 << 16;
 public:
     ClientSocket(unsigned short port, core::string_view address);
+    ClientSocket(const int socketFd, const unsigned short port, core::string_view address);
     ClientSocket(ClientSocket&& other);
     ClientSocket& operator=(ClientSocket&& other);
 
