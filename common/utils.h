@@ -12,8 +12,9 @@
 #include <initializer_list>
 #include <core/string_view.hpp>
 
-inline std::vector<char> join_vectors(std::initializer_list<std::vector<char>> list) {
-    std::vector<char> result;
+template<typename T>
+std::vector<T> join_vectors(std::initializer_list<std::vector<T>> list) {
+    std::vector<T> result;
     for (auto& x : list)
         result.insert(result.end(), x.begin(), x.end());
     return result;
@@ -140,7 +141,7 @@ void debugTellType() {
 template<typename, typename>
 struct join_tuples_impl;
 
-template<template <typename...> class C, typename... Ts, typename... Rs>
+template<template<typename...> class C, typename... Ts, typename... Rs>
 struct join_tuples_impl<C<Ts...>, C<Rs...>> {
     using type = C<Ts..., Rs...>;
 };
