@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include "client_api.h"
+#include "../common/client_api.h"
+#include "../common/server_api.h"
 
 void CommunicationManager::send(const Api& message) {
     mSocketManager.push(message.to_bytes());
@@ -12,7 +13,6 @@ void CommunicationManager::send(const Api& message) {
 }
 
 std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
-
     refreshMessages();
 
     for (auto it = mIncoming.begin(); it != mIncoming.end(); ++it) {
@@ -26,7 +26,6 @@ std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
 }
 
 std::unique_ptr<Api> CommunicationManager::receiveNext(){
-
     refreshMessages();
 
     if (mIncoming.empty())
@@ -43,7 +42,7 @@ void CommunicationManager::refreshMessages(){
         Api api(message);
         const char apiType = api.getType();
         bool added = false;
-        using Apis = static_for_each<ClientApiList, type_wrapper>;
+        using Apis = static_for_each<join_tuples<ClientApiList, ServerApiList>, type_wrapper>;
         for_each_tuple(Apis{}, [&] (auto x) {
             using T = typename decltype(x)::type;
             if (T::type == apiType) {
@@ -52,6 +51,7 @@ void CommunicationManager::refreshMessages(){
                 added = true;
             }
         });
+        assert(added && "Unknown message type");
     }
 }
 

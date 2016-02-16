@@ -1,5 +1,6 @@
-#ifndef SERVER_SERVER_API_H
-#define SERVER_SERVER_API_H
+#pragma once
+
+#include "../common/api.h"
 
 class SendTime : public Api {
 public:
@@ -37,4 +38,4 @@ public:
     core::string_view getName() const override { return "RequestedFile"; }
 };
 
-#endif //SERVER_SERVER_API_H_H
+using ServerApiList = std::tuple<SendTime, SendFileList, SendFile>;

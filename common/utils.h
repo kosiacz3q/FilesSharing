@@ -136,3 +136,14 @@ void debugTellType() {
     DebugTypeTeller<T> t;
     (void) t;
 }
+
+template<typename, typename>
+struct join_tuples_impl;
+
+template<template <typename...> class C, typename... Ts, typename... Rs>
+struct join_tuples_impl<C<Ts...>, C<Rs...>> {
+    using type = C<Ts..., Rs...>;
+};
+
+template<typename T, typename R>
+using join_tuples = typename join_tuples_impl<T, R>::type;
