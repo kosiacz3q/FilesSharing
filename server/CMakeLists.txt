@@ -11,22 +11,19 @@ set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3")
 set(SOURCE_FILES 
 	server.cpp 
 	ServerSocket.cpp 
-	ServerSocket.h
 	ServerManager.cpp 
-	ServerManager.h
 	RuntimeContext.h
 	RuntimeContext.cpp 
-	RuntimeContext.h
 	RuntimeContext.cpp 
-	RuntimeContext.h 
 	ClientsManager.cpp 
-	ClientsManager.h 
 
 	../common/client_socket.cpp
-        ../common/client_socket_manager.cpp
+    ../common/client_socket_manager.cpp
 	../common/communication_manager.cpp
 	../common/api.cpp
-        ClientHandler.cpp ClientHandler.h Actions/IAction.h Actions/ActionsContainer.cpp Actions/ActionsContainer.h Actions/SendTimeStamp.cpp Actions/SendTimeStamp.h)
+    ClientHandler.cpp 
+    Actions/ActionsContainer.cpp
+    Actions/SendTimeStamp.cpp)
 
 add_executable(server ${SOURCE_FILES} server.cpp)
 
