@@ -1,14 +1,32 @@
 #include <iostream>
 
+#include <boost/filesystem.hpp>
+
 #include "common/client_socket_manager.h"
 #include "common/communication_manager.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
 
 using namespace std;
+namespace fs = boost::filesystem;
+
+struct recursive_directory_range {
+    using iterator = fs::recursive_directory_iterator;
+    recursive_directory_range(fs::path p) : p_(p) {}
+
+    iterator begin() { return fs::recursive_directory_iterator(p_); }
+    iterator end() { return fs::recursive_directory_iterator(); }
+
+    fs::path p_;
+};
+
 
 int main()
 {
+    for (auto it : recursive_directory_range(".")) {
+        std::cout << it << std::endl;
+    }
+
 	ClientSocket ss(4096, "127.0.0.1");
 
 //    ClientSocketManager manager(std::move(ss));

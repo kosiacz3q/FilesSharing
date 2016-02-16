@@ -18,9 +18,15 @@ add_executable(tests ${SOURCE_FILES} tests.cpp)
 include_directories(
 	../
 	./
+	${Boost_INCLUDE_DIRS}
 )
 
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.53.0 COMPONENTS system filesystem REQUIRED)
+
 find_package(Threads)
-target_link_libraries(client ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(tests ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(client ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+target_link_libraries(tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
