@@ -3,6 +3,7 @@
 #include "common/client_socket_manager.h"
 #include "common/communication_manager.h"
 #include "common/client_api.h"
+#include "common/server_api.h"
 
 using namespace std;
 
@@ -22,7 +23,10 @@ int main()
     CommunicationManager cm(std::move(ss));
     GetTime gt(110);
     cm.send(gt);
-    GetFileList gfl = cm.receive<GetFileList>(10);
-    gfl.dump();
-    sleep(3);
+    sleep(1);
+    auto res = cm.receive<SendTime>(10);
+    res.dump();
+    std::cerr << "\n";
+    for (auto& x : res.getPayload()) cerr << +x << " ";
+    sleep(1);
 }
