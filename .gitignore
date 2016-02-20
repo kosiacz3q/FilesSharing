@@ -44,3 +44,6 @@ install_manifest.txt
 # Clion
 .idea
 
+# TestFile
+testFile.file
+

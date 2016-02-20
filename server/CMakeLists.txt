@@ -19,11 +19,14 @@ set(SOURCE_FILES
 	../common/communication_manager.cpp
 	../common/api.cpp
     ../common/server_api.cpp
+    ../common/file_scanner.cpp
 
     ClientHandler.cpp 
     Actions/ActionsContainer.cpp
     Actions/SendTimeStamp.cpp
-        Actions/SendFileList.cpp Actions/SendFileList.h Actions/SendFile.cpp Actions/SendFile.h)
+    Actions/SendFileList.cpp
+    Actions/SendFile.cpp
+)
 
 add_executable(server ${SOURCE_FILES} server.cpp)
 
@@ -32,6 +35,11 @@ include_directories(
 	./
 )
 
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.53.0 COMPONENTS system filesystem REQUIRED)
+
 find_package(Threads)
-target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
