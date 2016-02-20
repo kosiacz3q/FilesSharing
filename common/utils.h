@@ -9,6 +9,7 @@
 #include <tuple>
 #include <algorithm>
 #include <memory>
+#include <string>
 #include <initializer_list>
 #include <core/string_view.hpp>
 
@@ -33,6 +34,10 @@ inline std::vector<char> to_bytes_impl(core::string_view text) {
     std::copy(text.begin(), text.end(), buffer.begin());
     buffer.back() = '\0';
     return buffer;
+}
+
+inline std::vector<char> to_bytes_impl(const std::string& text) {
+    return to_bytes_impl(core::string_view(text));
 }
 
 inline std::vector<char> to_bytes() {

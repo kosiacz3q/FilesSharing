@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "../catch/catch.hpp"
 
+#include <core/string_view.hpp>
+
 #include "../common/utils.h"
 #include "../common/api.h"
 #include "../common/client_api.h"
@@ -120,7 +122,29 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
 
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
     FileScanner sc("./test_dir");
-    REQUIRE(sc.getFileInfo()[0].first == "./test_dir/aaa.txt");
-    REQUIRE(sc.getFileInfo()[1].first == "./test_dir/bbb/ddd/eee.txt");
-    REQUIRE(sc.getFileInfo()[2].first == "./test_dir/bbb/ccc.txt");
+    REQUIRE(sc.getFileInfo()[0].path == "./test_dir/aaa.txt");
+    REQUIRE(sc.getFileInfo()[1].path == "./test_dir/bbb/ddd/eee.txt");
+    REQUIRE(sc.getFileInfo()[2].path == "./test_dir/bbb/ccc.txt");
+}
+
+TEST_CASE("Files as list", "[file_scanner]") {
+    FileScanner sc("./test_dir");
+    std::string list = sc.asFileList();
+    REQUIRE(list.find("/aaa.txt;") != std::string::npos);
+    REQUIRE(list.find("/bbb/ddd/eee.txt;") != std::string::npos);
+    REQUIRE(list.find("/bbb/ccc.txt;") != std::string::npos);
+}
+
+TEST_CASE("FileScanner roundtrip", "[file_scanner]") {
+    FileScanner fs("./test_dir");
+    std::string list = fs.asFileList();
+    std::cerr << "List:\n";
+    for (auto& x : list) std::cerr << x << " ";
+    std::cerr << "EndList:\n";
+    auto bytes = to_bytes(list);
+    std::cerr << "Bytes:\n";
+    for (auto& x : bytes) std::cerr << x << " ";
+    std::cerr << "EndBytes:\n";
+    FileScanner second(bytes);
+    REQUIRE(fs.getFileInfo() == second.getFileInfo());
 }

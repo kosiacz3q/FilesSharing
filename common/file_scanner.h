@@ -2,7 +2,6 @@
 
 #include <boost/filesystem.hpp>
 #include <fstream>
-#include <core/string_view.hpp>
 #include <string>
 #include <vector>
 #include <ctime>
@@ -21,21 +20,51 @@ struct recursive_directory_range {
     fs::path p_;
 };
 
+struct FileInfo {
+    using TimeStampType = time_t;
+
+    std::string path;
+    TimeStampType timestamp;
+
+    friend std::ostream& operator<<(std::ostream& os, const FileInfo& fileInfo) {
+        return os << fileInfo.path << "; " << fileInfo.timestamp;
+    }
+
+    friend std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
+        std::string first;
+        os >> first;
+        assert(first.back() == ";");
+        fileInfo.path = std::string(first.begin(), first.end() - 1);
+        os >> fileInfo.timestamp;
+
+        return os;
+    }
+
+    bool operator==(const FileInfo& other) const {
+        return timestamp == other.timestamp && path == other.path;
+    }
+};
+
 class FileScanner {
 public:
-    using TimeStampType = time_t;
-    static_assert(std::is_same<TimeStampType, decltype(time(0))>(), "");
-    static_assert(std::is_same<TimeStampType, decltype(fs::last_write_time({}))>(), "");
+    static_assert(std::is_same<FileInfo::TimeStampType, decltype(time(0))>(), "");
+    static_assert(std::is_same<FileInfo::TimeStampType, decltype(fs::last_write_time({}))>(), "");
 
-    FileScanner(core::string_view path);
+    FileScanner(const std::string& path);
+    FileScanner(const std::vector<char> bytes);
+    FileScanner(const FileScanner&) = default;
+    FileScanner& operator=(const FileScanner&) = default;
+    FileScanner(FileScanner&&) = default;
+    FileScanner& operator=(FileScanner&&) = default;
     static std::vector<char> getFileAsBytes(const std::string& path);
     static bool exists(const std::string& path);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }
 
+    std::string asFileList() const;
 
 private:
-    core::string_view mPath;
-    std::vector<std::pair<std::string, TimeStampType>> mFiles;
+    std::string mPath;
+    std::vector<FileInfo> mFiles;
 };
