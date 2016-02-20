@@ -1,4 +1,5 @@
 #include <iostream>
+#include <server/Actions/SendFileList.h>
 #include "ServerManager.h"
 
 #include "Actions/SendTimeStamp.h"
@@ -12,6 +13,7 @@ int main()
     auto ac = std::make_shared<ActionsContainer>();
 
     ac->registerAction(std::make_shared<SendTimeStamp>());
+    ac->registerAction(std::make_shared<SendFileList>());
 
     ServerManager ss = ServerManager(std::make_shared<ServerSocket>(port), ac);
 
