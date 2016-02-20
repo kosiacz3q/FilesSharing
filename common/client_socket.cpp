@@ -95,7 +95,7 @@ core::optional<std::vector<char>> ClientSocket::receive() {
     if (!isValid()) return core::nullopt;
 
     auto res = recv(mSocketDesc, mReceiveBuffer.data(), mReceiveBuffer.size(), 0);
-    if (res < 0) return core::nullopt;
+    if (res <= 0) return core::nullopt;
 
     return std::vector<char>(mReceiveBuffer.begin(), mReceiveBuffer.begin() + res);
 }
