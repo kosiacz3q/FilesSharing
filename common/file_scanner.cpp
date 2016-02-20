@@ -24,3 +24,7 @@ std::vector<char> FileScanner::getFileAsBytes(const std::string& path) {
               std::back_inserter(res));
     return res;
 }
+
+bool FileScanner::exists(const std::string& path) {
+    return fs::exists(path) && fs::is_regular_file(path);
+}

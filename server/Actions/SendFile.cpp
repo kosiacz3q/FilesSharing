@@ -1,7 +1,7 @@
 #include "SendFile.h"
 
-#include <common/server_api.h>
-#include <common/utils.h>
+#include "common/server_api.h"
+#include "common/utils.h"
 #include "common/file_scanner.h"
 
 void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
@@ -10,20 +10,16 @@ void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     //TODO refactor this ugly thing
     // when spawning a new thread with a function ref, local variables are (thread) local... ~Kuba
-    thread_local char pathToRequestedFile[50];
+    std::string pathToRequestedFile(msg->getPayload().data());
 
-    from_bytes(
-            msg->getPayload().begin(),
-            msg->getPayload().end(),
-            pathToRequestedFile);
-
-    printf("Requested file %s\n", pathToRequestedFile);
+    printf("Requested file %s\n", pathToRequestedFile.c_str());
 
     //TODO check if file exists
+    assert(FileScanner::exists(pathToRequestedFile) && "Handle me!");
 
     perror("I don't give a #$@! what he wants, i will send my favorite file\n");
 
-    ffs.setPayload(std::vector<char>(FileScanner::getFileAsBytes("syncRoot/testFile.file")));
+    ffs.setPayload(FileScanner::getFileAsBytes("syncRoot/testFile.file"));
 
     ptr->send(ffs);
 

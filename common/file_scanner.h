@@ -29,6 +29,7 @@ public:
 
     FileScanner(core::string_view path);
     static std::vector<char> getFileAsBytes(const std::string& path);
+    static bool exists(const std::string& path);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }
