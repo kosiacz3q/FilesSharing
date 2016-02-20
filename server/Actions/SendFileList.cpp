@@ -7,15 +7,13 @@ void SendFileList::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg)
 
     ServerFileList sfl(msg->getID());
 
-    std::ifstream fileList("FileList", std::ios_base::binary);
+    thread_local std::ifstream fileList("syncRoot/FileList", std::ios_base::binary);
 
     assert(fileList.is_open());
 
-    auto payload = std::vector<char>(
+    sfl.setPayload(std::vector<char>(
             std::istreambuf_iterator<char>(fileList),
-            std::istreambuf_iterator<char>());
-
-    sfl.setPayload(payload);
+            std::istreambuf_iterator<char>()));
 
     ptr->send(sfl);
 

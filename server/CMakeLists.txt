@@ -23,7 +23,7 @@ set(SOURCE_FILES
     ClientHandler.cpp 
     Actions/ActionsContainer.cpp
     Actions/SendTimeStamp.cpp
-        Actions/SendFileList.cpp Actions/SendFileList.h)
+        Actions/SendFileList.cpp Actions/SendFileList.h Actions/SendFile.cpp Actions/SendFile.h)
 
 add_executable(server ${SOURCE_FILES} server.cpp)
 
