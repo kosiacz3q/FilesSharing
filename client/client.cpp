@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <boost/filesystem.hpp>
+#include <fstream>
 
 #include "common/client_socket_manager.h"
 #include "common/communication_manager.h"
@@ -65,7 +66,11 @@ int main()
             auto res = cm.receive<ServerFileList>(120);
             res.dump();
             std::cerr << "\n";
-            for (auto &x : res.getPayload()) cerr << +x << " ";
+
+            std::ofstream out("FileList", std::ios_base::binary);
+
+            for (auto &x : res.getPayload()) out << (char)x;
+
             cerr << "\n";
             break;
         }
