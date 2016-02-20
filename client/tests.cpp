@@ -4,6 +4,7 @@
 #include "../common/utils.h"
 #include "../common/api.h"
 #include "../common/client_api.h"
+#include "../common/file_scanner.h"
 
 TEST_CASE("Bytification of ints", "[to_byte]") {
     int i = 0;
@@ -115,4 +116,11 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
 
     gfbp.setPayload({'l', 'o', 'l', '.', 'w', 't', 'w', '\0'});
     REQUIRE(gfbp.getPath() == "lol.wtw");
+}
+
+TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
+    FileScanner sc("./test_dir");
+    REQUIRE(sc.getFileInfo()[0].first == "./test_dir/aaa.txt");
+    REQUIRE(sc.getFileInfo()[1].first == "./test_dir/bbb/ddd/eee.txt");
+    REQUIRE(sc.getFileInfo()[2].first == "./test_dir/bbb/ccc.txt");
 }
