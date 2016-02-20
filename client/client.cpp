@@ -36,11 +36,10 @@ int main()
             GetTime gt(110);
             cm.send(gt);
             printf("Request sent\n");
-            sleep(3);
-            auto res = cm.receive<ServerTime>(110);
-            res.dump();
+            auto res = cm.receiveBlocking<ServerTime>(110);
+            res->dump();
             std::cerr << "\n";
-            for (auto &x : res.getPayload()) cerr << +x << " ";
+            for (auto &x : res->getPayload()) cerr << +x << " ";
             cerr << "\n";
             break;
         }
@@ -49,14 +48,13 @@ int main()
             GetFileList gfl(120);
             cm.send(gfl);
             printf("Request sent\n");
-            sleep(3);
-            auto res = cm.receive<ServerFileList>(120);
-            res.dump();
+            auto res = cm.receiveBlocking<ServerFileList>(120);
+            res->dump();
             std::cerr << "\n";
 
             std::ofstream out("FileList", std::ios_base::binary);
 
-            for (auto &x : res.getPayload()) out << (char)x;
+            for (auto &x : res->getPayload()) out << (char)x;
 
             cerr << "\n";
             break;
@@ -69,13 +67,12 @@ int main()
 
             cm.send(gfl);
             printf("Request sent\n");
-            sleep(3);
-            auto res = cm.receive<FileFromServer>(150);
-            res.dump();
+            auto res = cm.receiveBlocking<FileFromServer>(150);
+            res->dump();
             std::cerr << "\n" << std::hex;
             std::ofstream out(fileName, std::ios_base::binary);
 
-            for (auto &x : res.getPayload()) {
+            for (auto &x : res->getPayload()) {
                 std::cerr << +x;
                 out << x;
             }
@@ -95,9 +92,8 @@ int main()
 
             cm.send(sft);
             printf("Request sent\n");
-            sleep(3);
-            auto res = cm.receive<FileFromClient>(160);
-            res.dump();
+            auto res = cm.receiveBlocking<FileFromClient>(160);
+            res->dump();
             std::cerr << "\n";
 
             break;

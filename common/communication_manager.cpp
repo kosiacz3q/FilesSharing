@@ -1,6 +1,7 @@
 #include "communication_manager.h"
 
 #include <iostream>
+#include <thread>
 
 #include "../common/client_api.h"
 #include "../common/server_api.h"
@@ -23,6 +24,18 @@ std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {
         }
     }
     return nullptr;
+}
+
+std::unique_ptr<Api> CommunicationManager::receiveBlocking(uint32_t id,
+                                                           std::chrono::milliseconds timeout) {
+    using namespace std::chrono;
+    auto start = system_clock::now();
+    std::unique_ptr<Api> ptr;
+    while (!(ptr = receive(id))
+           && duration_cast<milliseconds>(system_clock::now() - start) < timeout) {
+        std::this_thread::sleep_for(10ms);
+    }
+    return ptr;
 }
 
 std::unique_ptr<Api> CommunicationManager::receiveNext(){

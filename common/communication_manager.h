@@ -1,8 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "../common/client_socket_manager.h"
-#include "../common/api.h"
+#include <chrono>
+#include "common/client_socket_manager.h"
+#include "common/api.h"
 
 class CommunicationManager {
 public:
@@ -12,9 +13,20 @@ public:
     void send(const Api& message);
     std::unique_ptr<Api> receive(uint32_t id);
     template<typename T>
-    T receive(uint32_t id) {
+    core::optional<T> receive(uint32_t id) {
         auto res = receive(id);
-        assert(res);
+        if (!res) return core::nullopt;
+        assert(res->getType() == T::type);
+        return *unique_cast<T>(std::move(res));
+    }
+
+    std::unique_ptr<Api> receiveBlocking(uint32_t id,
+                             std::chrono::milliseconds timeout = std::chrono::milliseconds(3000));
+    template<typename T>
+    core::optional<T> receiveBlocking(uint32_t id,
+                          std::chrono::milliseconds timeout = std::chrono::milliseconds(3000)) {
+        auto res = receiveBlocking(id, timeout);
+        if (!res) return core::nullopt;
         assert(res->getType() == T::type);
         return *unique_cast<T>(std::move(res));
     }
