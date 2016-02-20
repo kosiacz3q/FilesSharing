@@ -57,6 +57,7 @@ public:
     FileScanner(FileScanner&&) = default;
     FileScanner& operator=(FileScanner&&) = default;
     static std::vector<char> getFileAsBytes(const std::string& path);
+    static void saveBytesAsFile(const std::string& path, const std::vector<char>& bytes);
     static bool exists(const std::string& path);
 
     auto getPath() const { return mPath; }
