@@ -28,9 +28,11 @@ public:
     static_assert(std::is_same<TimeStampType, decltype(fs::last_write_time({}))>(), "");
 
     FileScanner(core::string_view path);
+    static std::vector<char> getFileAsBytes(const std::string& path);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }
+
 
 private:
     core::string_view mPath;

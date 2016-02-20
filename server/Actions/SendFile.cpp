@@ -2,13 +2,14 @@
 
 #include <common/server_api.h>
 #include <common/utils.h>
-#include <fstream>
+#include "common/file_scanner.h"
 
 void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     FileFromServer ffs(msg->getID());
 
     //TODO refactor this ugly thing
+    // when spawning a new thread with a function ref, local variables are (thread) local... ~Kuba
     thread_local char pathToRequestedFile[50];
 
     from_bytes(
@@ -22,11 +23,7 @@ void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     perror("I don't give a #$@! what he wants, i will send my favorite file\n");
 
-    thread_local std::ifstream fileToSend("syncRoot/testFile.file", std::ios_base::binary);
-
-    ffs.setPayload(std::vector<char>(
-            std::istreambuf_iterator<char>(fileToSend),
-            std::istreambuf_iterator<char>()));
+    ffs.setPayload(std::vector<char>(FileScanner::getFileAsBytes("syncRoot/testFile.file")));
 
     ptr->send(ffs);
 
