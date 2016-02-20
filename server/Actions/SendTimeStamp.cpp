@@ -19,7 +19,3 @@ void SendTimeStamp::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg
 
     printf("Timestamp sent\n");
 }
-
-int SendTimeStamp::getType() const {
-    return GetTime::type;
-}

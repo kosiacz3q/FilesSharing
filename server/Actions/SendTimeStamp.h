@@ -7,7 +7,11 @@
 
 class SendTimeStamp : public IAction{
 
-    int getType() const;
+public:
+
+    int getType() const{
+        return GetTime::type;
+    };
 
     void handle(CommunicationManagerPtr, std::unique_ptr<Api> msg);
 
