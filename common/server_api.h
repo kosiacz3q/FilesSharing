@@ -39,4 +39,16 @@ public:
     core::string_view getName() const override { return "RequestedFile"; }
 };
 
+class FileFromClient : public Api {
+public:
+    static constexpr char type = 39;
+
+    FileFromClient(uint32_t id) : Api(type, 0, id) {}
+    FileFromClient(const std::vector<char>& bytes) : Api(bytes) {
+        assert(getType() == type);
+    }
+
+    core::string_view getName() const override { return "ClientFile"; }
+};
+
 using ServerApiList = std::tuple<ServerTime, ServerFileList, FileFromServer>;
