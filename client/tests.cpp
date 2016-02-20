@@ -138,13 +138,7 @@ TEST_CASE("Files as list", "[file_scanner]") {
 TEST_CASE("FileScanner roundtrip", "[file_scanner]") {
     FileScanner fs("./test_dir");
     std::string list = fs.asFileList();
-    std::cerr << "List:\n";
-    for (auto& x : list) std::cerr << x << " ";
-    std::cerr << "EndList:\n";
     auto bytes = to_bytes(list);
-    std::cerr << "Bytes:\n";
-    for (auto& x : bytes) std::cerr << x << " ";
-    std::cerr << "EndBytes:\n";
     FileScanner second(bytes);
     REQUIRE(fs.getFileInfo() == second.getFileInfo());
 }

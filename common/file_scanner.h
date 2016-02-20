@@ -51,6 +51,8 @@ public:
     static std::vector<char> getFileAsBytes(const std::string& path);
     static void saveBytesAsFile(const std::string& path, const std::vector<char>& bytes);
     static bool exists(const std::string& path);
+    static void rename(const std::string& from, const std::string& to);
+    static void remove(const std::string& path);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }

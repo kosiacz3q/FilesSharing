@@ -67,3 +67,14 @@ std::string FileScanner::asFileList() const {
 
     return oss.str();
 }
+
+void FileScanner::rename(const std::string& from, const std::string& to) {
+    assert(exists(from));
+    assert(!exists(to));
+    fs::rename(from, to);
+}
+
+void FileScanner::remove(const std::string& path) {
+    assert(exists(path));
+    fs::remove(path);
+}
