@@ -85,11 +85,9 @@ int main()
             sleep(3);
             auto res = cm.receive<FileFromServer>(150);
             res.dump();
-            std::cerr << "\n";
+            std::cerr << "\n" << std::hex;
 
-            std::ofstream out(fileName, std::ios_base::binary);
-
-            for (auto &x : res.getPayload()) out << (char)x;
+            for (auto &x : res.getPayload()) std::cerr << +x;
 
             cerr << "\n";
             break;
