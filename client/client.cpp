@@ -29,7 +29,7 @@ int main()
 
     CommunicationManager cm(std::move(ss));
 
-    switch(3){
+    switch(4){
 
         case 1: //timestamp
         {
@@ -61,7 +61,7 @@ int main()
             cerr << "\n";
             break;
         }
-        case 3: //single file
+        case 3: //single file request
         {
             std::string fileName = "testFile.file";
 
@@ -81,6 +81,25 @@ int main()
             }
 
             cerr << "\n";
+            break;
+        }
+        case 4: //send single file
+        {
+            std::string fileName = "testFile2.file";
+
+            std::ifstream fileToSend(fileName, std::ios_base::binary);
+
+            SendFileToServer sft(160, fileName, std::vector<char>(
+                    std::istreambuf_iterator<char>(fileToSend),
+                    std::istreambuf_iterator<char>()));
+
+            cm.send(sft);
+            printf("Request sent\n");
+            sleep(3);
+            auto res = cm.receive<FileFromClient>(160);
+            res.dump();
+            std::cerr << "\n";
+
             break;
         }
 

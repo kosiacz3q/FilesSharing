@@ -22,10 +22,11 @@ set(SOURCE_FILES
     ../common/file_scanner.cpp
 
     ClientHandler.cpp 
-    Actions/ActionsContainer.cpp
-    Actions/SendTimeStamp.cpp
-    Actions/SendFileList.cpp
-    Actions/SendFile.cpp
+    	Actions/ActionsContainer.cpp
+    	Actions/SendTimeStamp.cpp
+        Actions/SendFileList.cpp
+	Actions/SendFile.cpp 
+	Actions/ReceiveFileFromClient.cpp
 )
 
 add_executable(server ${SOURCE_FILES} server.cpp)
