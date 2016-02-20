@@ -42,7 +42,7 @@ int main()
 
     CommunicationManager cm(std::move(ss));
 
-    switch(2){
+    switch(3){
 
         case 1: //timestamp
         {
@@ -68,6 +68,26 @@ int main()
             std::cerr << "\n";
 
             std::ofstream out("FileList", std::ios_base::binary);
+
+            for (auto &x : res.getPayload()) out << (char)x;
+
+            cerr << "\n";
+            break;
+        }
+        case 3: //single file
+        {
+            std::string fileName = "testFile.file";
+
+            GetFileByPath gfl(150, fileName);
+
+            cm.send(gfl);
+            printf("Request sent\n");
+            sleep(3);
+            auto res = cm.receive<FileFromServer>(150);
+            res.dump();
+            std::cerr << "\n";
+
+            std::ofstream out(fileName, std::ios_base::binary);
 
             for (auto &x : res.getPayload()) out << (char)x;
 
