@@ -41,10 +41,13 @@ int main()
     CommunicationManager cm(std::move(ss));
     GetTime gt(110);
     cm.send(gt);
-    sleep(1);
-    auto res = cm.receive<SendTime>(10);
+    printf("Request sent\n");
+    sleep(3);
+    auto res = cm.receive<ServerTime>(110);
     res.dump();
     std::cerr << "\n";
     for (auto& x : res.getPayload()) cerr << +x << " ";
-    sleep(1);
+    cerr << "\n";
+
+
 }

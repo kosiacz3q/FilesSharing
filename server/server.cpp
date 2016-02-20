@@ -21,5 +21,5 @@ int main()
 
     ss.close();
 
-	cout << "Hello server\n";
+	cout << "Rest in peace.\n";
 }
