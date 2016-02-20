@@ -130,9 +130,9 @@ TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
 TEST_CASE("Files as list", "[file_scanner]") {
     FileScanner sc("./test_dir");
     std::string list = sc.asFileList();
-    REQUIRE(list.find("/aaa.txt;") != std::string::npos);
-    REQUIRE(list.find("/bbb/ddd/eee.txt;") != std::string::npos);
-    REQUIRE(list.find("/bbb/ccc.txt;") != std::string::npos);
+    REQUIRE(list.find("/aaa.txt") != std::string::npos);
+    REQUIRE(list.find("/bbb/ddd/eee.txt") != std::string::npos);
+    REQUIRE(list.find("/bbb/ccc.txt") != std::string::npos);
 }
 
 TEST_CASE("FileScanner roundtrip", "[file_scanner]") {

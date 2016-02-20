@@ -27,18 +27,10 @@ struct FileInfo {
     TimeStampType timestamp;
 
     friend std::ostream& operator<<(std::ostream& os, const FileInfo& fileInfo) {
-        return os << fileInfo.path << "; " << fileInfo.timestamp;
+        return os << fileInfo.timestamp << "; " << fileInfo.path;
     }
 
-    friend std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
-        std::string first;
-        os >> first;
-        assert(first.back() == ";");
-        fileInfo.path = std::string(first.begin(), first.end() - 1);
-        os >> fileInfo.timestamp;
-
-        return os;
-    }
+    friend std::istream& operator>>(std::istream& os, FileInfo& fileInfo);
 
     bool operator==(const FileInfo& other) const {
         return timestamp == other.timestamp && path == other.path;

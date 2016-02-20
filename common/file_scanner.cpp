@@ -5,6 +5,21 @@
 #include <algorithm>
 #include <sstream>
 
+std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
+    os >> fileInfo.timestamp;
+    char sc;
+    os >> sc;
+    assert(sc == ';');
+    char space;
+    os.get(space);
+    assert(space = ' ');
+    char buffer[4096] = {};
+    os.getline(buffer, sizeof(buffer));
+    fileInfo.path = std::string(buffer);
+
+    return os;
+}
+
 FileScanner::FileScanner(const std::string& path)
     : mPath(path) {
     for (auto it : recursive_directory_range(path)) {
@@ -31,7 +46,6 @@ std::vector<char> FileScanner::getFileAsBytes(const std::string& path) {
     std::vector<char> res;
     std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(),
               std::back_inserter(res));
-    res.push_back('\0');
     return res;
 }
 
