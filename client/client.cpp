@@ -38,16 +38,39 @@ int main()
 //    for (auto& x : res) cout << x;
 
     // test with echo '22000A00000000000000' | xxd -r -p | nc -l -p 4096 > file.hex
+
     CommunicationManager cm(std::move(ss));
-    GetTime gt(110);
-    cm.send(gt);
-    printf("Request sent\n");
-    sleep(3);
-    auto res = cm.receive<ServerTime>(110);
-    res.dump();
-    std::cerr << "\n";
-    for (auto& x : res.getPayload()) cerr << +x << " ";
-    cerr << "\n";
 
+    switch(2){
 
+        case 1: //timestamp
+        {
+            GetTime gt(110);
+            cm.send(gt);
+            printf("Request sent\n");
+            sleep(3);
+            auto res = cm.receive<ServerTime>(110);
+            res.dump();
+            std::cerr << "\n";
+            for (auto &x : res.getPayload()) cerr << +x << " ";
+            cerr << "\n";
+            break;
+        }
+        case 2: //file list
+        {
+            GetFileList gfl(120);
+            cm.send(gfl);
+            printf("Request sent\n");
+            sleep(3);
+            auto res = cm.receive<ServerFileList>(120);
+            res.dump();
+            std::cerr << "\n";
+            for (auto &x : res.getPayload()) cerr << +x << " ";
+            cerr << "\n";
+            break;
+        }
+
+        default:
+            break;
+    }
 }
