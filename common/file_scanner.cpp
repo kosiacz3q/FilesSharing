@@ -36,9 +36,8 @@ std::vector<char> FileScanner::getFileAsBytes(const std::string& path) {
 }
 
 void FileScanner::saveBytesAsFile(const std::string& path, const std::vector<char>& bytes) {
-    std::string str(bytes.data(), bytes.data() + bytes.size());
     std::ofstream file(path, std::ios::binary);
-    std::copy(str.begin(), str.end(), std::ostreambuf_iterator<char>(file));
+    std::copy(bytes.begin(), bytes.end(), std::ostreambuf_iterator<char>(file));
 }
 
 bool FileScanner::exists(const std::string& path) {
