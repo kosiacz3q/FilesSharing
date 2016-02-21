@@ -1,11 +1,13 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "common/file_scanner.h"
 
 class FileDiff {
 public:
-    FileDiff(const std::vector<FileInfo>& mine, const std::vector<FileInfo>& other)
-        : mMine(mine), mOther(other) {}
+    // What the other has changed in relation to mine.
+    FileDiff(const std::vector<FileInfo>& mine, const std::vector<FileInfo>& other);
 
     DEFAULT_MOVE_COPY(FileDiff);
 
@@ -14,6 +16,6 @@ public:
     std::vector<FileInfo> getDeleted() const;
 
 private:
-    std::vector<FileInfo> mMine;
-    std::vector<FileInfo> mOther;
+    std::unordered_map<std::string, FileInfo::TimeStampType> mMine;
+    std::unordered_map<std::string, FileInfo::TimeStampType> mOther;
 };
