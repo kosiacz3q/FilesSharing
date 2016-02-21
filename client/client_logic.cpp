@@ -3,6 +3,8 @@
 #include <iostream>
 #include <ctime>
 #include <algorithm>
+#include <chrono>
+#include <thread>
 
 #include "common/file_scanner.h"
 #include "common/client_api.h"
@@ -16,12 +18,19 @@ ClientLogic::ClientLogic(CommunicationManager& cm, const std::string& rootFolder
 
     if (!checkTimeDiff()) return;
 
+    std::cerr << "Starting loop.\n";
     auto res = loop();
     std::cerr << "Loop ended.\n";
-    if (res == Error::NoError) {
-        std::cout << "Closing without any errors.\n";
-        return;
+
+    core::string_view errorMessage = "Closing without any errors.";
+    switch (res) {
+        case Error::TimeDiffError: errorMessage = "Time difference error."; break;
+        case Error::Timeout: errorMessage = "Timeout. Communication aborted."; break;
+
+        default: break;
     }
+
+    std::cout << errorMessage << "\n";
 }
 
 bool ClientLogic::checkTimeDiff() {
@@ -46,7 +55,18 @@ bool ClientLogic::checkTimeDiff() {
 }
 
 ClientLogic::Error ClientLogic::loop() {
-    std::cerr << "Starting loop.\n";
+    using namespace std::chrono_literals;
+    while (true) {
+        FileScanner scanner(mRoot);
+
+        GetFileList getFileList(nextID());
+        mCM.send(getFileList);
+        auto fileList = mCM.receiveBlocking<ServerFileList>(currentID());
+        if (!fileList) return Error::Timeout;
+        // TODO: handle incoming fileList
+
+        std::this_thread::sleep_for(10s);
+    }
 
     return Error::NoError;
 }

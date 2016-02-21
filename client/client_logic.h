@@ -13,7 +13,7 @@ private:
     enum class Error {
         NoError,
         TimeDiffError,
-
+        Timeout,
     };
 
     bool checkTimeDiff();

@@ -13,6 +13,7 @@ public:
     core::string_view getName() const override { return "ServerTime"; }
 
     auto getTimestamp() const { return mTimestamp; }
+    
 private:
     time_t mTimestamp;
 };
@@ -21,12 +22,12 @@ class ServerFileList : public Api {
 public:
     static constexpr char type = 35;
 
-    ServerFileList(uint32_t id) : Api(type, 0, id) {}
-    ServerFileList(const std::vector<char>& bytes) : Api(bytes) {
-        assert(getType() == type);
-    }
+    ServerFileList(uint32_t id, const std::string& path);
+    ServerFileList(const std::vector<char>& bytes);
 
     core::string_view getName() const override { return "ServerFileList"; }
+private:
+    std::string mFileList;
 };
 
 class FileFromServer : public Api {
