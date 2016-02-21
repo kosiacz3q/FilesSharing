@@ -28,6 +28,7 @@ public:
     core::string_view getName() const override { return "ServerFileList"; }
 
     const auto& getFileList() const { return mFileList; }
+
 private:
     std::string mFileList;
 };
@@ -37,9 +38,12 @@ public:
     static constexpr char type = 37;
 
     FileFromServer(uint32_t id) : Api(type, 0, id) {}
+    FileFromServer(uint32_t id, const std::string& path, const std::string& root);
     FileFromServer(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
     }
+
+    const auto& getFile() const { return getPayload(); }
 
     core::string_view getName() const override { return "RequestedFile"; }
 };

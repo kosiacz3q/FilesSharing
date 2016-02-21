@@ -26,6 +26,7 @@ private:
     Error onIncomingFileList(FileScanner remoteFiles);
     Error deleteFiles(const std::vector<FileInfo>& toDelete);
     Error requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd);
+    Error requestAndSaveNewFile(FileInfo file, const std::string& fullPath);
 
     CommunicationManager& mCM;
     std::string mRoot;

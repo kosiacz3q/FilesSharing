@@ -102,9 +102,17 @@ ClientLogic::Error ClientLogic::deleteFiles(const std::vector<FileInfo>& toDelet
     return Error::NoError;
 }
 
-static ClientLogic::Error requestAndSaveNewFile(FileInfo toAdd, const std::string& fullPath) {
+ClientLogic::Error ClientLogic::requestAndSaveNewFile(FileInfo file, const std::string& fullPath) {
+    GetFileByPath get(nextID(), file.path);
+    mCM.send(get);
+    auto response = mCM.receiveBlocking<FileFromServer>(currentID());
+    if (!response) return Error::Timeout;
 
-    return ClientLogic::Error::NoError;
+    const auto& fileAsBytes = response->getFile();
+    FileScanner::saveBytesAsFile(fullPath, fileAsBytes);
+    FileScanner::setModificationTime(fullPath, file.timestamp);
+
+    return Error::NoError;
 }
 
 ClientLogic::Error ClientLogic::requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd) {

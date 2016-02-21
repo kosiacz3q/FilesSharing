@@ -35,3 +35,11 @@ ServerFileList::ServerFileList(const std::vector<char>& bytes)
     assert(getType() == type);
     std::cerr << "Deserialization file list:\n" << mFileList << "\n";
 }
+
+FileFromServer::FileFromServer(uint32_t id, const std::string& path, const std::string& root)
+        : Api(type, 0, id) {
+    auto fullPath = FileScanner::joinPaths(path, root);
+    assert(FileScanner::exists(fullPath));
+    auto bytes = FileScanner::getFileAsBytes(fullPath);
+    setPayload(bytes);
+}
