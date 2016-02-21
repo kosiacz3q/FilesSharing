@@ -5,9 +5,6 @@
 #include "common/file_scanner.h"
 
 void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
-
-    FileFromServer ffs(msg->getID());
-
     //TODO refactor this ugly thing
     // when spawning a new thread with a function ref, local variables are (thread) local... ~Kuba
     std::string pathToRequestedFile(msg->getPayload().data());
@@ -19,8 +16,7 @@ void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     perror("I don't give a #$@! what he wants, i will send my favorite file\n");
 
-    ffs.setPayload(FileScanner::getFileAsBytes("syncRoot/testFile.file"));
-
+    FileFromServer ffs(msg->getID(), "testFile.file", "./syncRoot");
     ptr->send(ffs);
 
     printf("File sent");
