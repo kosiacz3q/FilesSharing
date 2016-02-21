@@ -7,6 +7,7 @@
 #include "../common/api.h"
 #include "../common/client_api.h"
 #include "../common/file_scanner.h"
+#include "../common/file_diff.h"
 
 TEST_CASE("Bytification of ints", "[to_byte]") {
     int i = 0;
@@ -141,4 +142,31 @@ TEST_CASE("FileScanner roundtrip", "[file_scanner]") {
     auto bytes = to_bytes(list);
     FileScanner second(bytes);
     REQUIRE(fs.getFileInfo() == second.getFileInfo());
+}
+
+TEST_CASE("FileDiff additions", "[file_diff]") {
+    std::vector<FileInfo> mine = {{"aaa.txt", 1}, {"bbb.txt", 2}};
+    std::vector<FileInfo> remote = {{"aaa.txt", 1}, {"ccc.txt", 3}};
+    FileDiff fd(mine, remote);
+    auto added = fd.getAdded();
+    REQUIRE(added.size() == 1);
+    REQUIRE((added.front() == FileInfo{"ccc.txt", 3}));
+}
+
+TEST_CASE("FileDiff deletions", "[file_diff]") {
+    std::vector<FileInfo> mine = {{"aaa.txt", 1}, {"bbb.txt", 2}};
+    std::vector<FileInfo> remote = {{"aaa.txt", 1}, {"ccc.txt", 3}};
+    FileDiff fd(mine, remote);
+    auto deleted = fd.getDeleted();
+    REQUIRE(deleted.size() == 1);
+    REQUIRE((deleted.front() == FileInfo{"bbb.txt", 2}));
+}
+
+TEST_CASE("FileDiff modifications", "[file_diff]") {
+    std::vector<FileInfo> mine = {{"aaa.txt", 1}, {"bbb.txt", 2}};
+    std::vector<FileInfo> remote = {{"aaa.txt", 4}, {"bbb.txt", 2}};
+    FileDiff fd(mine, remote);
+    auto modified = fd.getModifiedOrAdded();
+    REQUIRE(modified.size() == 1);
+    REQUIRE((modified.front() == FileInfo{"aaa.txt", 4})); // Returns newer timestamp
 }

@@ -12,7 +12,7 @@ public:
     DEFAULT_MOVE_COPY(FileDiff);
 
     std::vector<FileInfo> getAdded() const;
-    std::vector<FileInfo> getModifiedOrAdded() const;
+    std::vector<FileInfo> getModifiedOrAdded() const; // Return newer timestamp.
     std::vector<FileInfo> getDeleted() const;
 
 private:
