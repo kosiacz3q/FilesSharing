@@ -59,4 +59,36 @@ public:
     core::string_view getName() const override { return "ClientFile"; }
 };
 
-using ServerApiList = std::tuple<ServerTime, ServerFileList, FileFromServer>;
+class ServerDeletedList : public Api {
+public:
+    static constexpr char type = 41;
+
+    //TODO: implement me!
+    ServerDeletedList(uint32_t id, const std::string& path) : Api(type, 0, id) {}
+    //TODO: implement me!
+    ServerDeletedList(const std::vector<char>& bytes) : Api(bytes) {
+        assert(getType() == type);
+    }
+
+    core::string_view getName() const override { return "ServerFileList"; }
+
+    const auto& getDeletedList() const { return mDeletedList; }
+
+private:
+    std::vector<std::string> mDeletedList;
+};
+
+class ServerDeletedResponse : public Api {
+public:
+    static constexpr char type = 43;
+
+    ServerDeletedResponse(uint32_t id) : Api(type, 0, id) {}
+    ServerDeletedResponse(const std::vector<char>& bytes) : Api(bytes) {
+        assert(getType() == type);
+    }
+
+    core::string_view getName() const override { return "ClientFile"; }
+};
+
+using ServerApiList = std::tuple<ServerTime, ServerFileList, FileFromServer, ServerDeletedList,
+                                 ServerDeletedResponse>;

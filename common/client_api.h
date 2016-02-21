@@ -77,4 +77,36 @@ private:
     std::vector<char>::const_iterator mFileEnd;
 };
 
-using ClientApiList = std::tuple<GetTime, GetFileList, GetFileByPath>;
+class GetDeletedList : public Api {
+public:
+    static constexpr char type = 40;
+
+    GetDeletedList(uint32_t id) : Api(type, 0, id) {}
+    GetDeletedList(const std::vector<char>& bytes) : Api(bytes) {
+        assert(getType() == type);
+    }
+
+    core::string_view getName() const override { return "GetDeletedList"; }
+};
+
+class MarkAsDeleted : public Api {
+public:
+    static constexpr char type = 40;
+
+    MarkAsDeleted(uint32_t id, const std::string& path) : Api(type, 0, id), mPath(path) {
+        setPayload(::to_bytes(path));
+    }
+    MarkAsDeleted(const std::vector<char>& bytes) : Api(bytes) {
+        assert(getType() == type);
+        from_bytes(getPayload().begin(), getPayload().end(), mPath);
+    }
+
+    const auto& getPath() const { return mPath; }
+    core::string_view getName() const override { return "GetDeletedList"; }
+
+private:
+    std::string mPath;
+};
+
+using ClientApiList = std::tuple<GetTime, GetFileList, GetFileByPath, GetDeletedList,
+                                 MarkAsDeleted>;

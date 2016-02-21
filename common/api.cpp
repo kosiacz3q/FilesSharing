@@ -7,6 +7,7 @@ Api::Api(const std::vector<char>& bytes) {
     uint32_t payloadSize;
     auto it = from_bytes(bytes.begin(), bytes.end(), mType, mStatus, mID, payloadSize);
     mPayload = std::vector<char>(it, bytes.end());
+    assert(mPayload.size() == payloadSize);
 }
 
 std::string Api::to_string() const {

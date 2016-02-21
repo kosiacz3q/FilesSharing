@@ -170,6 +170,18 @@ TEST_CASE("SendFileToServer from file", "[api]") {
     REQUIRE(second.getFile() == hex_to_bytes("616c61206d61206b6f7461"));
 }
 
+TEST_CASE("MarkAsDeleted roundtrip", "[api]") {
+    MarkAsDeleted deleted(123, "abc.txt");
+    std::vector<char> bytes = {40, 0, 123, 0, 0, 0, /*payload size*/ 8, 0, 0, 0,
+                               'a', 'b', 'c', '.', 't', 'x', 't', '\0'};
+    REQUIRE(deleted.getPath() == "abc.txt");
+    REQUIRE(deleted.to_bytes() == bytes);
+
+    MarkAsDeleted second(bytes);
+    REQUIRE(second.getPath() == "abc.txt");
+    REQUIRE(deleted.to_bytes() == second.to_bytes());
+}
+
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
     FileScanner sc("./test_dir_original");
     REQUIRE(sc.getFileInfo()[0].path == "aaa.txt");
