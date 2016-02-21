@@ -9,7 +9,7 @@
 #include "../common/file_scanner.h"
 #include "../common/file_diff.h"
 
-TEST_CASE("Bytification of ints", "[to_byte]") {
+TEST_CASE("Bytification of ints", "[serialization]") {
     int i = 0;
     auto bytes = to_bytes(i);
     REQUIRE(bytes == (std::vector<char>{0, 0, 0, 0}));
@@ -19,7 +19,7 @@ TEST_CASE("Bytification of ints", "[to_byte]") {
     REQUIRE(bytes == (std::vector<char>{char(0xDD), char(0xCC), char(0xBB), char(0xAA)}));
 }
 
-TEST_CASE("Debytification of ints", "[from_byte]") {
+TEST_CASE("Debytification of ints", "[serialization]") {
     std::vector<char> bytes{0, 0, 0, 0};
     int i;
     from_bytes(bytes.begin(), bytes.end(), i);
@@ -28,6 +28,14 @@ TEST_CASE("Debytification of ints", "[from_byte]") {
     bytes = std::vector<char>{char(0xDD), char(0xCC), char(0xBB), char(0xAA)};
     from_bytes(bytes.begin(), bytes.end(), i);
     REQUIRE(i == 0xAABBCCDD);
+}
+
+TEST_CASE("Time roundtrip", "[serialization]") {
+    const auto now = time(nullptr);
+    auto bytes = ::to_bytes(now);
+    time_t back;
+    from_bytes(bytes.begin(), bytes.end(), back);
+    REQUIRE(now == back);
 }
 
 TEST_CASE("Joining vectors", "[join_vector]") {

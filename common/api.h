@@ -24,6 +24,7 @@ public:
     virtual std::vector<char> to_bytes() const;
     virtual void setPayload(std::vector<char> payload);
     virtual void dump() const;
+    virtual void dumpPayload() const;
     virtual core::string_view getName() const { return "Api"; }
 
     auto getType() const { return mType; }

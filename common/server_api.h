@@ -1,16 +1,18 @@
 #pragma once
 
 #include "../common/api.h"
-#include <time.h>
+#include <ctime>
 
 class ServerTime : public Api {
 public:
     static constexpr char type = 33;
 
-    ServerTime(uint32_t id) : Api(type, 0, id), mTimestamp(time(0)) {}
+    ServerTime(uint32_t id);
     ServerTime(const std::vector<char>& bytes);
 
     core::string_view getName() const override { return "ServerTime"; }
+
+    auto getTimestamp() const { return mTimestamp; }
 private:
     time_t mTimestamp;
 };

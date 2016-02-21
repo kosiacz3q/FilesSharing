@@ -29,23 +29,15 @@ int main(int argc, char** argv)
         return 1;
     }
 
-//    ClientSocketManager manager(std::move(ss));
-//    manager.push({'Y', 'o', '!'});
-//    sleep(5);
-//    auto res = manager.pop();
-//    for (auto& x : res) cout << x;
-//    res = manager.pop();
-//    for (auto& x : res) cout << x;
-
     // test with echo '22000A00000000000000' | xxd -r -p | nc -l -p 4096 > file.hex
 
     CommunicationManager cm(std::move(ss));
 
-    switch(0){
-
+    switch (0) {
         case 0: //normal use
         {
-            ClientLogic cl(cm, rootFolder);
+            ClientLogic _(cm, rootFolder);
+
             break;
         }
         case 1: //timestamp

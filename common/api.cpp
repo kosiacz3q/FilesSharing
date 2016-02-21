@@ -26,6 +26,13 @@ void Api::dump() const {
     std::cerr << to_string() << "\n";
 }
 
+void Api::dumpPayload() const {
+    std::cerr << "{ ";
+    for (auto& x : mPayload)
+        std::cerr << +x << ", ";
+    std::cerr << " }\n";
+}
+
 void Api::setPayload(std::vector<char> payload) {
     mPayload = std::move(payload);
 }

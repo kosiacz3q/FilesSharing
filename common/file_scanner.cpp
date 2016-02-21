@@ -10,7 +10,7 @@
 
 namespace fs = boost::filesystem;
 
-static_assert(std::is_same<FileInfo::TimeStampType, decltype(time(0))>(), "");
+static_assert(std::is_same<FileInfo::TimeStampType, decltype(time(nullptr))>(), "");
 static_assert(std::is_same<FileInfo::TimeStampType, decltype(fs::last_write_time({}))>(), "");
 
 struct recursive_directory_range {
