@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "common/file_scanner.h"
+#include "common/file_diff.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
 
@@ -63,9 +64,53 @@ ClientLogic::Error ClientLogic::loop() {
         mCM.send(getFileList);
         auto fileList = mCM.receiveBlocking<ServerFileList>(currentID());
         if (!fileList) return Error::Timeout;
-        // TODO: handle incoming fileList
+        auto& list = fileList->getFileList();
+        FileScanner remoteFiles(::to_bytes_impl(list));
+        auto res = onIncomingFileList(remoteFiles);
+        if (res != Error::NoError) return res;
 
         std::this_thread::sleep_for(10s);
+    }
+
+    return Error::NoError;
+}
+
+ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
+    FileScanner myFiles(mRoot);
+    FileDiff diff(myFiles, remoteFiles);
+
+    auto toDelete = diff.getDeleted();
+    auto deleteRes = deleteFiles(toDelete);
+    if (deleteRes != Error::NoError) return deleteRes;
+
+    auto toAdd = diff.getModifiedOrAdded();
+    auto requestRes = requestAndSaveNewFiles(toAdd);
+    if (requestRes != Error::NoError) return requestRes;
+
+    return Error::NoError;
+}
+
+ClientLogic::Error ClientLogic::deleteFiles(const std::vector<FileInfo>& toDelete) {
+    std::cerr << "Deleting files:\n";
+    for (auto& x : toDelete) {
+        auto fullName = FileScanner::joinPaths(mRoot, x.path);
+        std::cerr << fullName << "\n";
+        assert(FileScanner::exists(fullName));
+        FileScanner::remove(fullName);
+    }
+
+    return Error::NoError;
+}
+
+ClientLogic::Error ClientLogic::requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd) {
+    std::cerr << "Adding or replacing files:\n";
+    for (auto& x : toAdd) {
+        auto fullName = FileScanner::joinPaths(mRoot, x.path);
+        std::cerr << fullName << "\n";
+        if (FileScanner::exists(fullName)) {
+            FileScanner::remove(fullName);
+            std::cerr << "Deleting:\t" << fullName << "\n";
+        }
     }
 
     return Error::NoError;

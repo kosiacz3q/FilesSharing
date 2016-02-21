@@ -26,6 +26,8 @@ public:
     ServerFileList(const std::vector<char>& bytes);
 
     core::string_view getName() const override { return "ServerFileList"; }
+
+    const auto& getFileList() const { return mFileList; }
 private:
     std::string mFileList;
 };

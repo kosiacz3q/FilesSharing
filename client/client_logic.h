@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstdint>
+#include "common/file_scanner.h"
 
 #include "common/communication_manager.h"
 
@@ -22,6 +23,9 @@ private:
     uint32_t currentID() { return mMessageID; }
 
     Error loop();
+    Error onIncomingFileList(FileScanner remoteFiles);
+    Error deleteFiles(const std::vector<FileInfo>& toDelete);
+    Error requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd);
 
     CommunicationManager& mCM;
     std::string mRoot;

@@ -15,12 +15,12 @@ static_assert(std::is_same<FileInfo::TimeStampType, decltype(fs::last_write_time
 
 struct recursive_directory_range {
     using iterator = fs::recursive_directory_iterator;
-    recursive_directory_range(fs::path p) : p_(p) {}
+    recursive_directory_range(fs::path p) : mP(p) {}
 
-    iterator begin() { return fs::recursive_directory_iterator(p_); }
-    iterator end() { return fs::recursive_directory_iterator(); }
+    iterator begin() { return iterator{mP}; }
+    iterator end() { return {}; }
 
-    fs::path p_;
+    fs::path mP;
 };
 
 static fs::path relativeTo(fs::path from, fs::path to) {
@@ -130,4 +130,8 @@ void FileScanner::remove(const std::string& path) {
 void FileScanner::setModificationTime(const std::string& path, FileInfo::TimeStampType time) {
     assert(exists(path));
     fs::last_write_time(path, time);
+}
+
+std::string FileScanner::joinPaths(const std::string& prefix, const std::string& sufix) {
+    return (fs::path(prefix) / fs::path(sufix)).string();
 }

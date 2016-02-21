@@ -39,6 +39,7 @@ public:
     static void rename(const std::string& from, const std::string& to);
     static void remove(const std::string& path);
     static void setModificationTime(const std::string& path, FileInfo::TimeStampType time);
+    static std::string joinPaths(const std::string& prefix, const std::string& sufix);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }
