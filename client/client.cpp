@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 
 #include "common/file_scanner.h"
 
@@ -6,12 +7,27 @@
 #include "common/communication_manager.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
+#include "client_logic.h"
 
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
 {
-	ClientSocket ss(4096, "127.0.0.1");
+    unsigned short port = 4096;
+    const char* ip = "127.0.0.1";
+    const char* rootFolder = "./test_dir";
+
+    if (argc == 4) {
+        sscanf(argv[1], "%hu", &port);
+        ip = argv[2];
+        rootFolder = argv[3];
+    } else if (argc > 4) assert(false && "Too many arguments");
+
+    ClientSocket ss(port, ip);
+    if (ss.isValid() == false) {
+        std::cout << "Could not connect.\nClient will now gracefully close.\n";
+        return 1;
+    }
 
 //    ClientSocketManager manager(std::move(ss));
 //    manager.push({'Y', 'o', '!'});
@@ -25,8 +41,13 @@ int main()
 
     CommunicationManager cm(std::move(ss));
 
-    switch(4){
+    switch(0){
 
+        case 0: //normal use
+        {
+            ClientLogic cl(cm, rootFolder);
+            break;
+        }
         case 1: //timestamp
         {
             GetTime gt(110);

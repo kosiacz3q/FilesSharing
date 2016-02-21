@@ -6,13 +6,15 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG=1 -Wall -Wextra -pe
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3")
 
 set(SOURCE_FILES 
-				 ../common/client_socket.cpp
-				 ../common/client_socket_manager.cpp
-				 ../common/communication_manager.cpp
-				 ../common/api.cpp
-				 ../common/server_api.cpp
-				 ../common/file_scanner.cpp
-				 ../common/file_diff.cpp
+	../common/client_socket.cpp
+	../common/client_socket_manager.cpp
+	../common/communication_manager.cpp
+	../common/api.cpp
+	../common/server_api.cpp
+	../common/file_scanner.cpp
+	../common/file_diff.cpp
+
+	client_logic.cpp
 )
 add_executable(client ${SOURCE_FILES} client.cpp)
 add_executable(tests ${SOURCE_FILES} tests.cpp)
