@@ -7,6 +7,8 @@
 #include <utility>
 #include <type_traits>
 
+#include "common/utils.h"
+
 struct FileInfo {
     using TimeStampType = time_t;
 
@@ -28,16 +30,15 @@ class FileScanner {
 public:
     FileScanner(const std::string& path);
     FileScanner(const std::vector<char> bytes);
-    FileScanner(const FileScanner&) = default;
-    FileScanner& operator=(const FileScanner&) = default;
-    FileScanner(FileScanner&&) = default;
-    FileScanner& operator=(FileScanner&&) = default;
+
+    DEFAULT_MOVE_COPY(FileScanner);
 
     static std::vector<char> getFileAsBytes(const std::string& path);
     static void saveBytesAsFile(const std::string& path, const std::vector<char>& bytes);
     static bool exists(const std::string& path);
     static void rename(const std::string& from, const std::string& to);
     static void remove(const std::string& path);
+    static void setModificationTime(const std::string& path, FileInfo::TimeStampType time);
 
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }

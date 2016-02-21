@@ -153,3 +153,12 @@ struct join_tuples_impl<C<Ts...>, C<Rs...>> {
 
 template<typename T, typename R>
 using join_tuples = typename join_tuples_impl<T, R>::type;
+
+#define DEFAULT_COPY(name) name(const name&) = default; \
+    name& operator=(const name&) = default
+
+#define DEFAULT_MOVE(name) name(name&&) = default; \
+    name& operator=(name&&) = default
+
+#define DEFAULT_MOVE_COPY(name) DEFAULT_COPY(name); \
+    DEFAULT_MOVE(name)

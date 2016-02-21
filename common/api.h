@@ -18,10 +18,7 @@ public:
 
     Api(const std::vector<char>& bytes);
 
-    Api(const Api&) = default;
-    Api& operator=(const Api&) = default;
-    Api(Api&&) = default;
-    Api& operator=(Api&&) = default;
+   DEFAULT_MOVE_COPY(Api);
 
     virtual std::string to_string() const;
     virtual std::vector<char> to_bytes() const;

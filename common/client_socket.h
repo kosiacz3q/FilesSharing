@@ -4,6 +4,7 @@
 #include <vector>
 #include <core/optional.hpp>
 #include "sockets.h"
+#include "common/utils.h"
 
 // I think it will be possible to get some common BaseSocket class out of both
 // server and client. ~Kuba
@@ -16,8 +17,7 @@ public:
     ClientSocket(ClientSocket&& other);
     ClientSocket& operator=(ClientSocket&& other);
 
-    ClientSocket(const ClientSocket&) = delete;
-    ClientSocket& operator=(const ClientSocket&) = delete;
+    DEFAULT_COPY(ClientSocket);
 
     ~ClientSocket();
 

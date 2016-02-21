@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <sstream>
 #include <type_traits>
+#include <cassert>
 #include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
@@ -29,7 +30,7 @@ std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
     assert(sc == ';');
     char space;
     os.get(space);
-    assert(space = ' ');
+    assert(space == ' ');
     char buffer[4096] = {};
     os.getline(buffer, sizeof(buffer));
     fileInfo.path = std::string(buffer);
@@ -39,6 +40,8 @@ std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
 
 FileScanner::FileScanner(const std::string& path)
     : mPath(path) {
+    assert(fs::exists(path));
+    assert(fs::is_directory(path));
     for (auto it : recursive_directory_range(path)) {
         if (fs::is_regular_file(it.status())) {
             std::cerr << it << " " << fs::last_write_time(it.path()) << std::endl;
@@ -92,6 +95,11 @@ void FileScanner::rename(const std::string& from, const std::string& to) {
 }
 
 void FileScanner::remove(const std::string& path) {
-    assert(exists(path));
+    assert(fs::exists(path)); // can be something else then a regular file
     fs::remove(path);
+}
+
+void FileScanner::setModificationTime(const std::string& path, FileInfo::TimeStampType time) {
+    assert(exists(path));
+    fs::last_write_time(path, time);
 }

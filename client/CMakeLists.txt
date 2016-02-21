@@ -12,6 +12,7 @@ set(SOURCE_FILES
 				 ../common/api.cpp
 				 ../common/server_api.cpp
 				 ../common/file_scanner.cpp
+				 ../common/file_diff.cpp
 )
 add_executable(client ${SOURCE_FILES} client.cpp)
 add_executable(tests ${SOURCE_FILES} tests.cpp)

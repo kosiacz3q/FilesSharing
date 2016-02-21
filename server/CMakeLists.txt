@@ -20,11 +20,12 @@ set(SOURCE_FILES
 	../common/api.cpp
     ../common/server_api.cpp
     ../common/file_scanner.cpp
+    ../common/file_diff.cpp
 
     ClientHandler.cpp 
-    	Actions/ActionsContainer.cpp
-    	Actions/SendTimeStamp.cpp
-        Actions/SendFileList.cpp
+    Actions/ActionsContainer.cpp
+    Actions/SendTimeStamp.cpp
+    Actions/SendFileList.cpp
 	Actions/SendFile.cpp 
 	Actions/ReceiveFileFromClient.cpp
 )
