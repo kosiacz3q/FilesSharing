@@ -38,6 +38,29 @@ TEST_CASE("Time roundtrip", "[serialization]") {
     REQUIRE(now == back);
 }
 
+TEST_CASE("Debytification of string", "[serialization]") {
+    std::vector<char> bytes{'a', 'b', 'c', 0, char(0xDD), char(0xCC), char(0xBB), char(0xAA)};
+    std::string s;
+    int i;
+    auto it = from_bytes(bytes.begin(), bytes.end(), s);
+    (void) from_bytes(it, bytes.end(), i);
+    REQUIRE(s == "abc");
+    REQUIRE(i == 0xAABBCCDD);
+}
+
+TEST_CASE("Debytification of strings", "[serialization]") {
+    std::vector<char> bytes{'a', 'b', 'c', 0, char(0xDD), char(0xCC), char(0xBB), char(0xAA),
+                            'd', 'e', 'f', 0};
+    std::string s1, s2;
+    int i;
+    auto it = from_bytes(bytes.begin(), bytes.end(), s1);
+    it = from_bytes(it, bytes.end(), i);
+    (void) from_bytes(it, bytes.end(), s2);
+    REQUIRE(s1 == "abc");
+    REQUIRE(i == 0xAABBCCDD);
+    REQUIRE(s2 == "def");
+}
+
 TEST_CASE("Joining vectors", "[join_vector]") {
     std::vector<char> first{0, 0, 0};
     std::vector<char> second{1, 1};
@@ -127,6 +150,24 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
 
     gfbp.setPayload({'l', 'o', 'l', '.', 'w', 't', 'w', '\0'});
     REQUIRE(gfbp.getPath() == "lol.wtw");
+}
+
+TEST_CASE("SendFileToServer from file", "[api]") {
+    auto now = time(nullptr);
+    SendFileToServer send(13, "aaa.txt", "./test_dir_original", now);
+    REQUIRE(send.getPath() == "aaa.txt");
+    REQUIRE(send.getTimestamp() == now);
+
+    // xxd -p test_dir_original/aaa.txt
+    REQUIRE(send.getFile() == hex_to_bytes("616c61206d61206b6f7461"));
+
+    auto bytes = send.to_bytes();
+    SendFileToServer second(bytes);
+    send.dumpPayload();
+    second.dumpPayload();
+    REQUIRE(second.getPath() == "aaa.txt");
+    REQUIRE(second.getTimestamp() == now);
+    REQUIRE(second.getFile() == hex_to_bytes("616c61206d61206b6f7461"));
 }
 
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {

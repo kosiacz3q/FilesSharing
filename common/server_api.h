@@ -37,7 +37,6 @@ class FileFromServer : public Api {
 public:
     static constexpr char type = 37;
 
-    FileFromServer(uint32_t id) : Api(type, 0, id) {}
     FileFromServer(uint32_t id, const std::string& path, const std::string& root);
     FileFromServer(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);

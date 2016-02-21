@@ -37,5 +37,9 @@ private:
     uint8_t mStatus = 0;
     uint32_t mID = 0;
     std::vector<char> mPayload;
+
+public:
+    static constexpr size_t PayloadInBytesOffset = sizeof(uint8_t) + sizeof(uint8_t)
+                                                   + sizeof(uint32_t) + sizeof(uint32_t);
 };
 

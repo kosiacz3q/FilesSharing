@@ -93,8 +93,7 @@ int main(int argc, char** argv)
         {
             std::string fileName = "testFile2.file";
 
-            SendFileToServer sft(160, fileName, "", time(nullptr),
-                                 FileScanner::getFileAsBytes(fileName));
+            SendFileToServer sft(160, fileName, "", time(nullptr));
 
             cm.send(sft);
             printf("Request sent\n");

@@ -85,6 +85,16 @@ IT from_bytes(IT begin, IT end, First& first, Rest&... rest) {
     return from_bytes(begin + sizeof(First)/sizeof(*begin), end, rest...);
 };
 
+template<typename IT>
+IT from_bytes(IT begin, IT end, std::string& first) {
+    assert(std::find(begin, end, '0') != end);
+    assert(begin < end);
+    (void) end;
+    const auto len = strlen(&*begin);
+    first = std::string(&*begin, len);
+    return begin + len + 1;
+};
+
 template<bool V, typename True, typename False>
 using if_t = std::conditional_t<V, True, False>;
 
@@ -153,6 +163,18 @@ struct join_tuples_impl<C<Ts...>, C<Rs...>> {
 
 template<typename T, typename R>
 using join_tuples = typename join_tuples_impl<T, R>::type;
+
+inline std::vector<char> hex_to_bytes(const std::string& hex) {
+    std::vector<char> bytes;
+
+    for (unsigned int i = 0; i < hex.length(); i += 2) {
+        std::string byteString = hex.substr(i, 2);
+        char byte = (char) strtol(byteString.c_str(), NULL, 16);
+        bytes.push_back(byte);
+    }
+
+    return bytes;
+}
 
 #define DEFAULT_COPY(name) name(const name&) = default; \
     name& operator=(const name&) = default
