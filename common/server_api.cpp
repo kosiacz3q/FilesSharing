@@ -4,7 +4,7 @@
 
 ServerTime::ServerTime(uint32_t id) 
 		: Api(type, 0, id)
-		, mTimestamp(1456789000) {
+		, mTimestamp(time(nullptr)) {
     setPayload(::to_bytes(mTimestamp));
     std::cerr << "Sent time:\t" << mTimestamp << "\n";
     assert(::to_bytes(mTimestamp) == getPayload());
