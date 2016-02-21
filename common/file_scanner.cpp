@@ -23,6 +23,33 @@ struct recursive_directory_range {
     fs::path p_;
 };
 
+static fs::path relativeTo(fs::path from, fs::path to) {
+    // Start at the root path and while they are the same then do nothing then when they first
+    // diverge take the remainder of the two path and replace the entire from path with ".."
+    // segments.
+    auto fromIter = from.begin();
+    auto toIter = to.begin();
+
+    // Loop through both
+    while (fromIter != from.end() && toIter != to.end() && (*toIter) == (*fromIter)) {
+        ++toIter;
+        ++fromIter;
+    }
+
+    fs::path finalPath;
+    while (fromIter != from.end()) {
+        finalPath /= "..";
+        ++fromIter;
+    }
+
+    while (toIter != to.end()) {
+        finalPath /= *toIter;
+        ++toIter;
+    }
+
+    return finalPath;
+}
+
 std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
     os >> fileInfo.timestamp;
     char sc;
@@ -45,7 +72,8 @@ FileScanner::FileScanner(const std::string& path)
     for (auto it : recursive_directory_range(path)) {
         if (fs::is_regular_file(it.status())) {
             std::cerr << it << " " << fs::last_write_time(it.path()) << std::endl;
-            mFiles.push_back({it.path().string(), fs::last_write_time(it.path())});
+            auto relative = relativeTo(fs::path(path), it.path());
+            mFiles.push_back({relative.string(), fs::last_write_time(it.path())});
         }
     }
 }
