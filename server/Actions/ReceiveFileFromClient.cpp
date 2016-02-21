@@ -17,6 +17,7 @@ void ReceiveFileFromClient::handle(CommunicationManagerPtr ptr, std::unique_ptr<
     auto file = uMsg->getFile();
     auto fullName = FileScanner::joinPaths("./syncRoot", uMsg->getPath());
     FileScanner::saveBytesAsFile(fullName, file);
+    FileScanner::setModificationTime(fullName, uMsg->getTimestamp());
 
     ptr->send(ffc);
 
