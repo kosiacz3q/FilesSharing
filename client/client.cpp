@@ -93,11 +93,8 @@ int main(int argc, char** argv)
         {
             std::string fileName = "testFile2.file";
 
-            std::ifstream fileToSend(fileName, std::ios_base::binary);
-
-            SendFileToServer sft(160, fileName, std::vector<char>(
-                    std::istreambuf_iterator<char>(fileToSend),
-                    std::istreambuf_iterator<char>()));
+            SendFileToServer sft(160, fileName, "", time(nullptr),
+                                 FileScanner::getFileAsBytes(fileName));
 
             cm.send(sft);
             printf("Request sent\n");

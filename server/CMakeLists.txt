@@ -18,6 +18,7 @@ set(SOURCE_FILES
     ../common/client_socket_manager.cpp
 	../common/communication_manager.cpp
 	../common/api.cpp
+	../common/client_api.cpp
     ../common/server_api.cpp
     ../common/file_scanner.cpp
     ../common/file_diff.cpp

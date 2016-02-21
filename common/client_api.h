@@ -57,20 +57,16 @@ class SendFileToServer : public Api {
 public:
     static constexpr char type = 38;
 
-    SendFileToServer(uint32_t id, core::string_view path, const std::vector<char>& bytes)
-            : Api(type, 0, id) {
-                setPayload(join_vectors({::to_bytes(path), {'\0'}, bytes}));
-    }
-
+    SendFileToServer(uint32_t id, const std::string& path, const std::string& root,
+                     time_t timestamp, const std::vector<char>& file);
     SendFileToServer(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
     }
 
-    void setPayload(std::vector<char> payload) override {
-        Api::setPayload(payload);
-    }
+    void setPayload(std::vector<char> payload) override;
 
-    void getFile(std::vector<char>::const_iterator& fileBegin, std::vector<char>::const_iterator& fileEnd) {
+    void getFile(std::vector<char>::const_iterator& fileBegin,
+                 std::vector<char>::const_iterator& fileEnd) {
 
         for (fileBegin = getPayload().begin(); fileBegin != getPayload().end(); ++fileBegin) {
             if (*fileBegin == '\0'){
@@ -102,6 +98,11 @@ public:
     }
 
     core::string_view getName() const override { return "SendFileToServer"; }
+
+private:
+    std::string mPath;
+    std::string mRoot;
+    time_t mTimestamp;
 };
 
 using ClientApiList = std::tuple<GetTime, GetFileList, GetFileByPath>;
