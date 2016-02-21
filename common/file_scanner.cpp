@@ -4,6 +4,23 @@
 #include <iterator>
 #include <algorithm>
 #include <sstream>
+#include <type_traits>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
+static_assert(std::is_same<FileInfo::TimeStampType, decltype(time(0))>(), "");
+static_assert(std::is_same<FileInfo::TimeStampType, decltype(fs::last_write_time({}))>(), "");
+
+struct recursive_directory_range {
+    using iterator = fs::recursive_directory_iterator;
+    recursive_directory_range(fs::path p) : p_(p) {}
+
+    iterator begin() { return fs::recursive_directory_iterator(p_); }
+    iterator end() { return fs::recursive_directory_iterator(); }
+
+    fs::path p_;
+};
 
 std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
     os >> fileInfo.timestamp;

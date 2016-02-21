@@ -11,10 +11,6 @@ using namespace std;
 
 int main()
 {
-    for (auto it : recursive_directory_range("./test_dir")) {
-        if (fs::is_regular_file(it.status())) std::cout << it << std::endl;
-    }
-
 	ClientSocket ss(4096, "127.0.0.1");
 
 //    ClientSocketManager manager(std::move(ss));
