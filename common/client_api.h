@@ -38,12 +38,12 @@ public:
     GetFileByPath(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
         auto& payload = getPayload();
-        mPath = std::string((const char *) payload.data());
+        mPath = std::string(payload.data());
     }
 
     void setPayload(std::vector<char> payload) override {
         Api::setPayload(payload);
-        mPath = std::string((const char *) payload.data());
+        mPath = std::string(payload.data());
     }
 
     core::string_view getPath() const { return  mPath; }

@@ -130,22 +130,22 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
 }
 
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
-    FileScanner sc("./test_dir");
-    REQUIRE(sc.getFileInfo()[0].path == "./test_dir/aaa.txt");
-    REQUIRE(sc.getFileInfo()[1].path == "./test_dir/bbb/ddd/eee.txt");
-    REQUIRE(sc.getFileInfo()[2].path == "./test_dir/bbb/ccc.txt");
+    FileScanner sc("./test_dir_original");
+    REQUIRE(sc.getFileInfo()[0].path == "aaa.txt");
+    REQUIRE(sc.getFileInfo()[1].path == "bbb/ddd/eee.txt");
+    REQUIRE(sc.getFileInfo()[2].path == "bbb/ccc.txt");
 }
 
 TEST_CASE("Files as list", "[file_scanner]") {
-    FileScanner sc("./test_dir");
+    FileScanner sc("./test_dir_original");
     std::string list = sc.asFileList();
-    REQUIRE(list.find("/aaa.txt") != std::string::npos);
-    REQUIRE(list.find("/bbb/ddd/eee.txt") != std::string::npos);
-    REQUIRE(list.find("/bbb/ccc.txt") != std::string::npos);
+    REQUIRE(list.find("aaa.txt") != std::string::npos);
+    REQUIRE(list.find("bbb/ddd/eee.txt") != std::string::npos);
+    REQUIRE(list.find("bbb/ccc.txt") != std::string::npos);
 }
 
 TEST_CASE("FileScanner roundtrip", "[file_scanner]") {
-    FileScanner fs("./test_dir");
+    FileScanner fs("./test_dir_original");
     std::string list = fs.asFileList();
     auto bytes = to_bytes(list);
     FileScanner second(bytes);

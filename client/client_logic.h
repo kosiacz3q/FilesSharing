@@ -10,13 +10,13 @@ class ClientLogic {
 public:
     ClientLogic(CommunicationManager& cm, const std::string& rootFolder);
 
-private:
     enum class Error {
         NoError,
         TimeDiffError,
         Timeout,
     };
 
+private:
     bool checkTimeDiff();
 
     uint32_t nextID() { return ++mMessageID; }

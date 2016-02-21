@@ -102,6 +102,11 @@ ClientLogic::Error ClientLogic::deleteFiles(const std::vector<FileInfo>& toDelet
     return Error::NoError;
 }
 
+static ClientLogic::Error requestAndSaveNewFile(FileInfo toAdd, const std::string& fullPath) {
+
+    return ClientLogic::Error::NoError;
+}
+
 ClientLogic::Error ClientLogic::requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd) {
     std::cerr << "Adding or replacing files:\n";
     for (auto& x : toAdd) {
@@ -111,7 +116,10 @@ ClientLogic::Error ClientLogic::requestAndSaveNewFiles(const std::vector<FileInf
             FileScanner::remove(fullName);
             std::cerr << "Deleting:\t" << fullName << "\n";
         }
+        auto res = requestAndSaveNewFile(x, fullName);
+        if (res != Error::NoError) return res;
     }
 
     return Error::NoError;
 }
+
