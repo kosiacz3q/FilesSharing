@@ -91,7 +91,7 @@ public:
 
 class MarkAsDeleted : public Api {
 public:
-    static constexpr char type = 40;
+    static constexpr char type = 42;
 
     MarkAsDeleted(uint32_t id, const std::string& path) : Api(type, 0, id), mPath(path) {
         setPayload(::to_bytes(path));
