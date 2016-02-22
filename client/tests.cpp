@@ -147,10 +147,6 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
     auto s = gfbp.getPath().to_string();
     REQUIRE(s.size() == 6);
     REQUIRE(gfbp.getPath() == "xD.wtf");
-
-
-    GetFileByPath gfbp2({'l', 'o', 'l', '.', 'w', 't', 'w', '\0'});
-    REQUIRE(gfbp2.getPath() == "lol.wtw");
 }
 
 TEST_CASE("SendFileToServer from file", "[api]") {
