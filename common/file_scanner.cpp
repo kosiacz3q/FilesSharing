@@ -135,3 +135,17 @@ void FileScanner::setModificationTime(const std::string& path, FileInfo::TimeSta
 std::string FileScanner::joinPaths(const std::string& prefix, const std::string& sufix) {
     return (fs::path(prefix) / fs::path(sufix)).string();
 }
+
+std::vector<FileInfo> FileScanner::getDeletedSince(const FileScanner& previous) const {
+    const auto& previousFiles = previous.mFiles;
+    std::vector<FileInfo> deleted;
+
+    for (auto& file : previousFiles) {
+        if (std::find_if(mFiles.begin(), mFiles.end(), [&](auto& x) { return x.path == file.path; })
+                == mFiles.end()) {
+            deleted.push_back(file);
+        }
+    }
+
+    return deleted;
+}

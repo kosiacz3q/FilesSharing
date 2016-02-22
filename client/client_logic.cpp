@@ -6,7 +6,6 @@
 #include <chrono>
 #include <thread>
 
-#include "common/file_scanner.h"
 #include "common/file_diff.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
@@ -76,14 +75,32 @@ ClientLogic::Error ClientLogic::loop() {
 }
 
 ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
+    //TODO: finish handling deleted files using DeletedFileList amd DeletedListManager
     FileScanner myFiles(mRoot);
     FileDiff diff(myFiles, remoteFiles);
 
-    auto toDelete = diff.getDeleted();
+    auto initialToDelete = diff.getDeleted();
+
+    GetDeletedList requestDeleted(nextID());
+    mCM.send(requestDeleted);
+    auto responseDeleted = mCM.receiveBlocking<ServerDeletedList>(currentID());
+    if (!responseDeleted) return Error::Timeout;
+
+    const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
+    std::vector<FileInfo> toDelete;
+    for (auto& x : initialToDelete) {
+        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x.path)
+                != remotelyDeleted.end()) {
+            toDelete.push_back(x);
+        }
+    }
+
     auto deleteRes = deleteFiles(toDelete);
     if (deleteRes != Error::NoError) return deleteRes;
 
     auto toAdd = diff.getModifiedOrAdded();
+    //DeletedListManager::getInstance().removeFromDeleted(extract(toAdd,
+    //                                                            [](auto& x) { return x.path; }));
     auto requestRes = requestAndSaveNewFiles(toAdd);
     if (requestRes != Error::NoError) return requestRes;
 
@@ -93,6 +110,7 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
 ClientLogic::Error ClientLogic::deleteFiles(const std::vector<FileInfo>& toDelete) {
     std::cerr << "Deleting files:\n";
     for (auto& x : toDelete) {
+
         auto fullName = FileScanner::joinPaths(mRoot, x.path);
         std::cerr << fullName << "\n";
         assert(FileScanner::exists(fullName));

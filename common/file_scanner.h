@@ -41,12 +41,18 @@ public:
     static void setModificationTime(const std::string& path, FileInfo::TimeStampType time);
     static std::string joinPaths(const std::string& prefix, const std::string& sufix);
 
+    std::vector<FileInfo> getDeletedSince(const FileScanner& previous) const;
+
     auto getPath() const { return mPath; }
     const auto& getFileInfo() const { return mFiles; }
 
     std::string asFileList() const;
 
+    friend class DeletedFileList;
+
 private:
+    FileScanner() {}
+
     std::string mPath;
     std::vector<FileInfo> mFiles;
 };

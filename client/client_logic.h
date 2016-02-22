@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include "common/file_scanner.h"
+#include "common/deleted_file_list.h"
 
 #include "common/communication_manager.h"
 
@@ -29,6 +30,7 @@ private:
     Error requestAndSaveNewFile(FileInfo file, const std::string& fullPath);
 
     CommunicationManager& mCM;
+    DeletedFileList mDeletedList;
     std::string mRoot;
     uint32_t mMessageID = 0;
     time_t mTimeOffset = 0;

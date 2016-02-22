@@ -14,6 +14,7 @@ set(SOURCE_FILES
 	../common/server_api.cpp
 	../common/file_scanner.cpp
 	../common/file_diff.cpp
+	../common/deleted_file_list.cpp
 
 	client_logic.cpp
 )
