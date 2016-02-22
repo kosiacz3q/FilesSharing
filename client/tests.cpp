@@ -169,7 +169,7 @@ TEST_CASE("SendFileToServer from file", "[api]") {
 
 TEST_CASE("MarkAsDeleted roundtrip", "[api]") {
     MarkAsDeleted deleted(123, "abc.txt");
-    std::vector<char> bytes = {40, 0, 123, 0, 0, 0, /*payload size*/ 8, 0, 0, 0,
+    std::vector<char> bytes = {42, 0, 123, 0, 0, 0, /*payload size*/ 8, 0, 0, 0,
                                'a', 'b', 'c', '.', 't', 'x', 't', '\0'};
     REQUIRE(deleted.getPath() == "abc.txt");
     REQUIRE(deleted.to_bytes() == bytes);
@@ -181,9 +181,16 @@ TEST_CASE("MarkAsDeleted roundtrip", "[api]") {
 
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
     FileScanner sc("./test_dir_original");
-    REQUIRE(sc.getFileInfo()[0].path == "aaa.txt");
-    REQUIRE(sc.getFileInfo()[1].path == "bbb/ddd/eee.txt");
-    REQUIRE(sc.getFileInfo()[2].path == "bbb/ccc.txt");
+
+    auto files = std::set<std::string>();
+
+    files.insert(sc.getFileInfo()[0].path);
+    files.insert(sc.getFileInfo()[1].path);
+    files.insert(sc.getFileInfo()[2].path);
+
+    REQUIRE(files.find("aaa.txt") != files.end());
+    REQUIRE(files.find("bbb/ddd/eee.txt") != files.end());
+    REQUIRE(files.find("bbb/ccc.txt") != files.end());
 }
 
 TEST_CASE("Files as list", "[file_scanner]") {
