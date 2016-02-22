@@ -41,13 +41,15 @@ public:
         mPath = std::string(payload.data());
     }
 
+    core::string_view getPath() const { return  mPath; }
+    core::string_view getName() const override { return "GetFileByPath"; }
+
+protected:
+
     void setPayload(std::vector<char> payload) override {
         Api::setPayload(payload);
         mPath = std::string(payload.data());
     }
-
-    core::string_view getPath() const { return  mPath; }
-    core::string_view getName() const override { return "GetFileByPath"; }
 
 private:
     std::string mPath;
@@ -61,13 +63,15 @@ public:
                      time_t timestamp);
     SendFileToServer(const std::vector<char>& bytes);
 
-    void setPayload(std::vector<char> payload) override;
-
     std::vector<char> getFile() const;
     const auto& getPath() const { return mPath; }
     auto getTimestamp() const { return mTimestamp; }
 
     core::string_view getName() const override { return "SendFileToServer"; }
+
+protected:
+
+    void setPayload(std::vector<char> payload) override;
 
 private:
     std::string mPath;

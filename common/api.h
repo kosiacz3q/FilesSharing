@@ -22,7 +22,7 @@ public:
 
     virtual std::string to_string() const;
     virtual std::vector<char> to_bytes() const;
-    virtual void setPayload(std::vector<char> payload);
+
     virtual void dump() const;
     virtual void dumpPayload() const;
     virtual core::string_view getName() const { return "Api"; }
@@ -31,6 +31,9 @@ public:
     auto getStatus() const { return mStatus; }
     auto getID() const { return mID; }
     const auto& getPayload() const { return mPayload; }
+
+protected:
+    virtual void setPayload(std::vector<char> payload);
 
 private:
     uint8_t mType = 0;
