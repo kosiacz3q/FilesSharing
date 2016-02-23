@@ -23,7 +23,7 @@ public:
     }
 
     void markAsDeleted(const std::string& toDeleted){
-        markAsDeleted({toDeleted});
+        markAsDeleted(std::vector<std::string>{toDeleted});
     };
     void markAsDeleted(const std::vector<std::string>& toDeleted);
     void removeFromDeleted(const std::vector<std::string>& existent);

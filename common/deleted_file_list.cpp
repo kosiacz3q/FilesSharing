@@ -26,7 +26,11 @@ std::vector<std::string> DeletedFileList::getToMarkAsDeleted(FileScanner newest)
 }
 
 void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted) {
-    std::fstream file(DeleteFileListName, std::ios::ate);
+
+    std::ofstream file(DeleteFileListName, std::ios::app);
+
+    assert(file.is_open() && "Cannot open file");
+
     for (auto& x : toDeleted) {
         if (isMarkedAsDeleted(x))
             continue;
