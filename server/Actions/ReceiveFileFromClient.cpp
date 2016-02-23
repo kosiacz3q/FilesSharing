@@ -10,7 +10,7 @@ void ReceiveFileFromClient::handle(CommunicationManagerPtr ptr, std::unique_ptr<
 
     auto path = FileScanner::joinPaths("./syncRoot", uMsg->getPath());
 
-    printf("Requested file %s\n", path.c_str());
+    printf("Requested file [%s]\n", path.c_str());
 
     auto file = uMsg->getFile();
 
