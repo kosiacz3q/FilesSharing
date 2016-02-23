@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
     CommunicationManager cm(std::move(ss));
 
-    switch (6) {
+    switch (0) {
         case 0: //normal use
         {
             ClientLogic _(cm, rootFolder);

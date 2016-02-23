@@ -1,15 +1,12 @@
 #include "common/deleted_file_list.h"
 
-#include <sys/types.h>
-#include <sys/inotify.h>
-
 static const auto& DeleteFileListName = ".deleted_filed";
 
 DeletedFileList::DeletedFileList() {
     (void) DeletedListManager::getInstance(); // read list from file;
 }
 
-std::vector<std::string> DeletedFileList::getToMarkAsDeleted(FileScanner newest) {
+std::vector<std::string> DeletedFileList::markAsDeleted(FileScanner newest) {
     auto deletedCandidates = newest.getDeletedSince(mLast);
     std::vector<std::string> toMarkAsDeleted;
 
@@ -20,15 +17,26 @@ std::vector<std::string> DeletedFileList::getToMarkAsDeleted(FileScanner newest)
     }
 
     DeletedListManager::getInstance().markAsDeleted(toMarkAsDeleted);
-    mLast = std::move(newest);
 
     return toMarkAsDeleted;
 }
 
+std::vector<std::string> DeletedFileList::markAsExistent(FileScanner newest) {
+    auto addedCandidates = newest.getAddedSince(mLast);
+    std::vector<std::string> toMarkAsAdded;
+
+    for (auto& x : addedCandidates) {
+        if (DeletedListManager::getInstance().isMarkedAsDeleted(x.path))
+            toMarkAsAdded.push_back(x.path);
+    }
+
+    DeletedListManager::getInstance().markAsExistent(toMarkAsAdded);
+
+    return toMarkAsAdded;
+}
+
 void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted) {
-
     std::ofstream file(DeleteFileListName, std::ios::app);
-
     assert(file.is_open() && "Cannot open file");
 
     for (auto& x : toDeleted) {
@@ -39,7 +47,7 @@ void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted
     }
 }
 
-void DeletedListManager::removeFromDeleted(const std::vector<std::string>& existent) {
+void DeletedListManager::markAsExistent(const std::vector<std::string>& existent) {
     for (auto& x : existent) {
         auto it = std::find(mContent.begin(), mContent.end(), x);
         if (it != mContent.end())
@@ -56,7 +64,6 @@ bool DeletedListManager::isMarkedAsDeleted(const std::string& path) {
 }
 
 DeletedListManager::DeletedListManager() {
-    int fd = fd = inotify_init();
     rereadFile();
 }
 

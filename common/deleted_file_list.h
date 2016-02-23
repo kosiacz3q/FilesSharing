@@ -3,13 +3,16 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "common/file_scanner.h"
 
 class DeletedFileList {
 public:
     DeletedFileList();
-    std::vector<std::string> getToMarkAsDeleted(FileScanner newest);
+    std::vector<std::string> markAsDeleted(FileScanner newest);
+    std::vector<std::string> markAsExistent(FileScanner newest);
+    void update(FileScanner newest) { mLast = std::move(newest); }
 
 private:
     FileScanner mLast;
@@ -22,15 +25,13 @@ public:
         return dfm;
     }
 
-    void markAsDeleted(const std::string& toDeleted){
-        markAsDeleted(std::vector<std::string>{toDeleted});
+    void markAsDeleted(const std::string& toDeleted) {
+        markAsDeleted({toDeleted});
     };
     void markAsDeleted(const std::vector<std::string>& toDeleted);
-    void removeFromDeleted(const std::vector<std::string>& existent);
+    void markAsExistent(const std::vector<std::string>& existent);
     bool isMarkedAsDeleted(const std::string& path);
-    auto& getMarkedAsDeleted(){
-        return mContent;
-    }
+    const auto& getMarkedAsDeleted() const { return mContent; }
 
 private:
     DeletedListManager();
