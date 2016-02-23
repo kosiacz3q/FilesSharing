@@ -98,9 +98,7 @@ std::vector<char> FileScanner::getFileAsBytes(const std::string& path) {
 }
 
 void FileScanner::saveBytesAsFile(const std::string& path, const std::vector<char>& bytes) {
-
     fs::create_directories(fs::path(path).parent_path());
-
     std::ofstream file(path, std::ios::binary);
     std::copy(bytes.begin(), bytes.end(), std::ostreambuf_iterator<char>(file));
 }
