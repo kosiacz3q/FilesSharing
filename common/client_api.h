@@ -113,4 +113,4 @@ private:
 };
 
 using ClientApiList = std::tuple<GetTime, GetFileList, GetFileByPath, GetDeletedList,
-                                 MarkAsDeleted>;
+                                 MarkAsDeleted, SendFileToServer>;

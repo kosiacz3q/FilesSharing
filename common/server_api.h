@@ -91,4 +91,4 @@ public:
 };
 
 using ServerApiList = std::tuple<ServerTime, ServerFileList, FileFromServer, ServerDeletedList,
-                                 ServerDeletedResponse>;
+                                 ServerDeletedResponse, FileFromClient>;
