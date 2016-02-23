@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../common/api.h"
 #include <ctime>
+#include <common/api.h>
+#include <common/utils.h>
 
 class ServerTime : public Api {
 public:
@@ -63,12 +64,9 @@ class ServerDeletedList : public Api {
 public:
     static constexpr char type = 41;
 
-    //TODO: implement me!
-    ServerDeletedList(uint32_t id, const std::string& path) : Api(type, 0, id) {}
-    //TODO: implement me!
-    ServerDeletedList(const std::vector<char>& bytes) : Api(bytes) {
-        assert(getType() == type);
-    }
+    ServerDeletedList(uint32_t id, const std::vector<std::string>& paths);
+
+    ServerDeletedList(const std::vector<char>& bytes);
 
     core::string_view getName() const override { return "ServerFileList"; }
 

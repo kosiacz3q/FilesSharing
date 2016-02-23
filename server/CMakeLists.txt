@@ -6,7 +6,6 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DNDEBUG=1 -Wall -Wextra -pe
 set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3")
 
 set(SOURCE_FILES 
-	server.cpp 
 	ServerSocket.cpp 
 	ServerManager.cpp 
 	RuntimeContext.h
@@ -31,20 +30,31 @@ set(SOURCE_FILES
 	Actions/SendFile.cpp 
 	Actions/ReceiveFileFromClient.cpp
         Actions/MarkAsDeletedAction.cpp
+	Actions/GetServerDeletedList.cpp
 )
 
 add_executable(server ${SOURCE_FILES} server.cpp)
+add_executable(tests ${SOURCE_FILES} tests.cpp)
+
 
 include_directories(
 	../
 	./
+	${BOOST_INCLUDE_DIRS}
 )
 
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.53.0 COMPONENTS system filesystem REQUIRED)
+find_package(Threads REQUIRED)
 
-find_package(Threads)
 target_link_libraries(server ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+
+target_link_libraries(tests
+                                                        ${CMAKE_THREAD_LIBS_INIT}
+                                                        ${Boost_FILESYSTEM_LIBRARY}
+                                                        ${Boost_SYSTEM_LIBRARY}
+)
+
 message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
