@@ -47,3 +47,15 @@ TEST_CASE("ServerDeletedList from bytes"){
     REQUIRE(sdl2.getDeletedList().size() == 2);
     REQUIRE(sdl2.getDeletedList() == result);
 }
+
+
+TEST_CASE("FileFromServer empty"){
+
+    auto f = FileFromServer(1,1);
+
+    auto bytes = std::vector<char> { 37, 1,
+                                     1, 0, 0, 0,
+                                     0, 0, 0, 0};
+
+    REQUIRE(f.to_bytes() == bytes);
+}

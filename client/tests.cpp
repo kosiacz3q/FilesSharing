@@ -99,6 +99,16 @@ TEST_CASE("Api bytification", "[api]") {
     REQUIRE(api.to_bytes() == bytes);
 }
 
+TEST_CASE("Api change status [api]"){
+    Api api(0, 1, 2, {'a', 'p', 'i'});
+
+    REQUIRE(api.getStatus() == 1);
+
+    api.setStatus(2);
+
+    REQUIRE(api.getStatus() == 2);
+}
+
 TEST_CASE("GetTime construction", "[api]") {
     GetTime gt(123);
     std::vector<char> bytes = {32, 0, 123, 0, 0, 0, /*payload size*/ 0, 0, 0, 0};

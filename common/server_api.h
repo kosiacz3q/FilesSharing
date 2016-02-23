@@ -39,6 +39,7 @@ public:
     static constexpr char type = 37;
 
     FileFromServer(uint32_t id, const std::string& path, const std::string& root);
+    FileFromServer(uint32_t id, uint32_t status);
     FileFromServer(const std::vector<char>& bytes) : Api(bytes) {
         assert(getType() == type);
     }

@@ -1,3 +1,5 @@
+#include <boost/algorithm/string.hpp>
+
 #include <iostream>
 #include <server/Actions/SendFileList.h>
 #include <server/Actions/SendFile.h>
@@ -10,13 +12,13 @@
 
 using namespace std;
 
+void checkForExitCommand();
+
 int main()
 {
     constexpr int port = 4096;
 
     auto ac = std::make_shared<ActionsContainer>();
-
-    //auto fm = std::make_shared<FilesManager>("syncRoot");
 
     ac->registerAction(std::make_shared<SendTimeStamp>());
     ac->registerAction(std::make_shared<SendFileList>());
@@ -29,9 +31,24 @@ int main()
 
     ss.start();
 
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    checkForExitCommand();
 
     ss.close();
 
-	cout << "Rest in peace.\n";
+    cout << "Rest in peace.\n";
+}
+
+
+void checkForExitCommand(){
+
+    auto exitCommand = std::set<std::string> {
+            "q", "quit", "exit"
+    };
+
+    std::string t;
+
+    do {
+        std::cin >> t;
+        boost::algorithm::to_lower(t);
+    }while(exitCommand.find(t) == exitCommand.end());
 }

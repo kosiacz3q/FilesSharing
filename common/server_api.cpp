@@ -44,6 +44,11 @@ FileFromServer::FileFromServer(uint32_t id, const std::string& path, const std::
     setPayload(bytes);
 }
 
+FileFromServer::FileFromServer(uint32_t id, uint32_t status)
+    :Api(type, status, id){
+
+}
+
 ServerDeletedList::ServerDeletedList(uint32_t id, const std::vector<std::string>& paths)
         : Api(type, 0, id) {
 
