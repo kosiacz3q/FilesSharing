@@ -77,7 +77,7 @@ ClientSocket& ClientSocket::operator=(ClientSocket&& other) {
 }
 
 core::optional<size_t> ClientSocket::send(const void* payload, size_t size) {
-    if (!isValid()) return false;
+    if (!isValid()) return core::nullopt;
     ssize_t res;
     if ((res = ::send(mSocketDesc, payload, size, 0)) < 0) {
         perror("Could not sent");
