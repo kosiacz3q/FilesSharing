@@ -1,8 +1,9 @@
 #include "common/deleted_file_list.h"
 
 #include <iostream>
+#include <fstream>
 
-static const auto& DeletedFileListName = ".deleted_files";
+static const auto* DeletedFileListName = ".deleted_files_list";
 
 DeletedFileList::DeletedFileList() {
     (void) DeletedListManager::getInstance(); // read list from file;
@@ -77,10 +78,18 @@ void DeletedListManager::rereadFile() {
     mContent.clear();
     std::cerr << "Rereading " << DeletedFileListName << "\n";
 
+    {std::ofstream _(DeletedFileListName, std::ios::trunc);}
+    if (!FileScanner::exists(DeletedFileListName)) {
+        std::cerr << "File does not exits\n";
+//        std::cerr << ("touch " + std::string(DeletedFileListName)).c_str() << "\n";
+//        system(("touch " + std::string(DeletedFileListName)).c_str());
+    }
     std::fstream file(DeletedFileListName, std::ios::trunc);
-    if (!FileScanner::exists(DeletedFileListName)) std::cerr << "File does not exits\n";
+
     std::string line;
     while (std::getline(file, line))
-        if (!line.empty())
+        if (!line.empty()) {
             mContent.push_back(line);
+            std::cerr << "Remembered deleted file:\t" << line << "\n";
+        }
 }
