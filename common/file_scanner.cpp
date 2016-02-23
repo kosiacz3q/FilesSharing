@@ -149,3 +149,18 @@ std::vector<FileInfo> FileScanner::getDeletedSince(const FileScanner& previous) 
 
     return deleted;
 }
+
+std::vector<FileInfo> FileScanner::getAddedSince(const FileScanner& previous) const {
+    const auto& previousFiles = previous.mFiles;
+    std::vector<FileInfo> added;
+
+    for (auto& file : mFiles) {
+        if (std::find_if(previousFiles.begin(), previousFiles.end(),
+                         [&](auto& x) { return x.path == file.path; })
+            == previousFiles.end()) {
+            added.push_back(file);
+        }
+    }
+
+    return added;
+}

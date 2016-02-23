@@ -77,9 +77,18 @@ ClientLogic::Error ClientLogic::loop() {
 ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     //TODO: finish handling deleted files using DeletedFileList amd DeletedListManager
     FileScanner myFiles(mRoot);
-    FileDiff diff(myFiles, remoteFiles);
+    auto deletedByUser = mDeletedList.markAsDeleted(myFiles);
+    std::cerr << "Deleted by user:\n";
+    for (auto& x : deletedByUser) std::cerr << x << ", ";
 
-    auto initialToDelete = diff.getDeleted();
+    auto markedExistent = mDeletedList.markAsExistent(myFiles);
+    std::cerr << "\nAdded previously deleted:\n";
+    for (auto& x : markedExistent) std::cerr << x << ", ";
+    std::cerr << "\n";
+
+    mDeletedList.update(myFiles);
+
+    FileDiff diff(myFiles, remoteFiles);
 
     GetDeletedList requestDeleted(nextID());
     mCM.send(requestDeleted);
@@ -87,20 +96,18 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     if (!responseDeleted) return Error::Timeout;
 
     const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
-    std::vector<FileInfo> toDelete;
-    for (auto& x : initialToDelete) {
-        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x.path)
+    std::vector<std::string> toDelete;
+    for (auto& x : deletedByUser) {
+        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x)
                 != remotelyDeleted.end()) {
             toDelete.push_back(x);
         }
     }
-
-    auto deleteRes = deleteFiles(toDelete);
+    auto deleteRes = deleteFiles(extract(toDelete, [](auto& x) { return FileInfo{x, 0}; }));
     if (deleteRes != Error::NoError) return deleteRes;
 
     auto toAdd = diff.getModifiedOrAdded();
-    //DeletedListManager::getInstance().removeFromDeleted(extract(toAdd,
-    //                                                            [](auto& x) { return x.path; }));
+
     auto requestRes = requestAndSaveNewFiles(toAdd);
     if (requestRes != Error::NoError) return requestRes;
 

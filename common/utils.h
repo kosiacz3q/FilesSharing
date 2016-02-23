@@ -176,8 +176,8 @@ inline std::vector<char> hex_to_bytes(const std::string& hex) {
     return bytes;
 }
 
-template<template <typename> class C, typename T, typename F>
-auto extract(const C<T>& container, F getter) {
+template<template <typename...> class C, typename... Ts, typename F>
+auto extract(const C<Ts...>& container, F getter) {
     using newT = std::remove_cv_t<std::remove_reference_t<decltype(getter(*container.begin()))>>;
     C<newT> newC;
     for (auto& x : container)
