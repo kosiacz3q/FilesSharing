@@ -3,8 +3,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <sys/types.h>
-#include <linux/inotify.h>
 
 #include "common/file_scanner.h"
 

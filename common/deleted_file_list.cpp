@@ -1,5 +1,8 @@
 #include "common/deleted_file_list.h"
 
+#include <sys/types.h>
+#include <sys/inotify.h>
+
 static const auto& DeleteFileListName = ".deleted_filed";
 
 DeletedFileList::DeletedFileList() {
@@ -49,6 +52,7 @@ bool DeletedListManager::isMarkedAsDeleted(const std::string& path) {
 }
 
 DeletedListManager::DeletedListManager() {
+    int fd = fd = inotify_init();
     rereadFile();
 }
 
