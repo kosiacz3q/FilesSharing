@@ -28,6 +28,10 @@ public:
     virtual core::string_view getName() const { return "Api"; }
 
     auto getType() const { return mType; }
+    void setStatus(const uint8_t newStatus){
+        mStatus = newStatus;
+    }
+
     auto getStatus() const { return mStatus; }
     auto getID() const { return mID; }
     const auto& getPayload() const { return mPayload; }
