@@ -50,8 +50,5 @@ void checkForExitCommand(){
     do {
         std::cin >> t;
         boost::algorithm::to_lower(t);
-
-        printf("ew\n");
-
     }while(exitCommand.find(t) == exitCommand.end());
 }

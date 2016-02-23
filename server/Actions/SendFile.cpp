@@ -15,8 +15,7 @@ void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
         ptr->send(FileFromServer(msg->getID(), 1));
         return;
     }
-
-
+    
     FileFromServer ffs(msg->getID(), pathToRequestedFile, "./syncRoot");
     ptr->send(ffs);
 
