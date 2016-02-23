@@ -28,7 +28,7 @@ include_directories(
 	../
 	./
 	${Boost_INCLUDE_DIRS}
-	${INOTIFY_INCLUDE_DIR}
+	${INotify_INCLUDE_DIRS}
 )
 
 set(Boost_USE_STATIC_LIBS ON)
