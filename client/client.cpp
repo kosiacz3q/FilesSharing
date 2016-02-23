@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 
     CommunicationManager cm(std::move(ss));
 
-    switch (0) {
+    switch (6) {
         case 0: //normal use
         {
             ClientLogic _(cm, rootFolder);
@@ -129,6 +129,29 @@ int main(int argc, char** argv)
                 perror("Null response");
 
             std::cerr << "\n";
+        }
+            break;
+
+        case 6: //get deleted list
+        {
+            GetDeletedList gdl(599);
+
+            cm.send(gdl);
+            printf("Request sent\n");
+
+            auto res = cm.receiveBlocking<ServerDeletedList>(599);
+
+
+
+            printf("Response received\n");
+
+            if (res) {
+
+                for (auto toRemove : res->getDeletedList())
+                std::cerr << toRemove << "\n";
+            }
+            else
+                perror("Null response");
         }
             break;
 

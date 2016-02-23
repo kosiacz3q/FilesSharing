@@ -3,6 +3,7 @@
 #include <server/Actions/SendFile.h>
 #include <server/Actions/ReceiveFileFromClient.h>
 #include <server/Actions/MarkAsDeletedAction.h>
+#include <server/Actions/GetServerDeletedList.h>
 #include "ServerManager.h"
 
 #include "Actions/SendTimeStamp.h"
@@ -22,6 +23,7 @@ int main()
     ac->registerAction(std::make_shared<SendFile>());
     ac->registerAction(std::make_shared<ReceiveFileFromClient>());
     ac->registerAction(std::make_shared<MarkAsDeletedAction>());
+    ac->registerAction(std::make_shared<GetServerDeletedList>());
 
     ServerManager ss = ServerManager(std::make_shared<ServerSocket>(port), ac);
 

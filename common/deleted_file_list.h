@@ -28,6 +28,9 @@ public:
     void markAsDeleted(const std::vector<std::string>& toDeleted);
     void removeFromDeleted(const std::vector<std::string>& existent);
     bool isMarkedAsDeleted(const std::string& path);
+    auto& getMarkedAsDeleted(){
+        return mContent;
+    }
 
 private:
     DeletedListManager();

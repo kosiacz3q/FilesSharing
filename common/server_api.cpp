@@ -43,3 +43,29 @@ FileFromServer::FileFromServer(uint32_t id, const std::string& path, const std::
     auto bytes = FileScanner::getFileAsBytes(fullPath);
     setPayload(bytes);
 }
+
+ServerDeletedList::ServerDeletedList(uint32_t id, const std::vector<std::string>& paths)
+        : Api(type, 0, id) {
+
+    std::vector<char> result = {};
+
+    for (auto s : paths)
+        result = join_vectors({result, ::to_bytes(s)});
+
+    setPayload(result);
+}
+
+ServerDeletedList::ServerDeletedList(const std::vector<char>& bytes): Api(bytes) {
+    assert(getType() == type);
+
+    auto payload = getPayload();
+
+    for (auto actual = payload.begin(), lastBegin = actual; actual != payload.end(); ++actual){
+        if (*actual == '\0'){
+            std::string path;
+            from_bytes(lastBegin, actual, path);
+            mDeletedList.push_back(path);
+            lastBegin = actual + 1;
+        }
+    }
+}
