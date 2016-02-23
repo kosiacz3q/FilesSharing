@@ -3,7 +3,9 @@
 #include <iostream>
 #include <fstream>
 
-static const auto* DeletedFileListName = ".deleted_files_list";
+static const char* getDeletedListName() {
+    return ".deleted_files_list";
+}
 
 DeletedFileList::DeletedFileList() {
     (void) DeletedListManager::getInstance(); // read list from file;
@@ -39,8 +41,8 @@ std::vector<std::string> DeletedFileList::markAsExistent(FileScanner newest) {
 }
 
 void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted) {
-    std::ofstream file(DeletedFileListName, std::ios::app);
-    assert(file.is_open() && "Cannot open file");
+    std::ofstream file(getDeletedListName(), std::ios::app);
+    assert(file.is_open() && file.good() && "Cannot open file");
 
     for (auto& x : toDeleted) {
         if (isMarkedAsDeleted(x))
@@ -58,12 +60,14 @@ void DeletedListManager::markAsExistent(const std::vector<std::string>& existent
             mContent.erase(it);
     }
 
-    FileScanner::remove(DeletedFileListName);
-    std::fstream file(DeletedFileListName, std::ios::trunc);
+    FileScanner::remove(getDeletedListName());
+    std::ofstream file(getDeletedListName(),  std::ios::app);
     assert(file.is_open());
     assert(file.good());
-    for (auto& x : mContent)
+    for (auto& x : mContent) {
         file << x << "\n";
+        std::cerr << "Restored file from memorized deleted:\t" << x << "\n";
+    }
 }
 
 bool DeletedListManager::isMarkedAsDeleted(const std::string& path) {
@@ -76,16 +80,10 @@ DeletedListManager::DeletedListManager() {
 
 void DeletedListManager::rereadFile() {
     mContent.clear();
-    std::cerr << "Rereading " << DeletedFileListName << "\n";
+    std::cerr << "Rereading " << getDeletedListName() << "\n";
 
-    {std::ofstream _(DeletedFileListName, std::ios::trunc);}
-    if (!FileScanner::exists(DeletedFileListName)) {
-        std::cerr << "File does not exits\n";
-//        std::cerr << ("touch " + std::string(DeletedFileListName)).c_str() << "\n";
-//        system(("touch " + std::string(DeletedFileListName)).c_str());
-    }
-    std::fstream file(DeletedFileListName, std::ios::trunc);
-
+    { std::ofstream _(getDeletedListName(), std::ios::app); } // Create file if not existent.
+    std::ifstream file(getDeletedListName());
     std::string line;
     while (std::getline(file, line))
         if (!line.empty()) {
