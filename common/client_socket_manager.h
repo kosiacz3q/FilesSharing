@@ -21,11 +21,12 @@ public:
 
 private:
     void loop();
+    core::optional<std::vector<char>> getFullIncomingMessage();
 
     struct Context {
         Context(ClientSocket&& socket) : mSocket(std::move(socket)) {}
 
-        std::vector<std::vector<char>> mIncomingBuffer;
+        std::vector<char> mIncomingBuffer;
         std::vector<std::vector<char>> mOutgoingBuffer;
 
         std::mutex mIncomingMutex;
@@ -37,4 +38,4 @@ private:
     std::shared_ptr<Context> mContext;
 };
 
-typedef std::shared_ptr<ClientSocketManager> ClientSocketManagerPtr;
+using ClientSocketManagerPtr = std::shared_ptr<ClientSocketManager>;

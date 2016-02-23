@@ -160,7 +160,7 @@ TEST_CASE("SendFileToServer from file bytefication", "[api]") {
             /*payload size*/ 19, 0, 0, 0,
             /* name */ 'b', 't', '.', 't', 'x', 't', '\0',
             /* time */ 23, 0, 0, 0, 0, 0, 0, 0,
-            /* file */ '1', '2', '3', 10
+            /* file */ '1', '2', '3', 10 // <-- new line
     };
 
     REQUIRE(send.getPayload().size() == bytes.size() - Api::PayloadInBytesOffset);

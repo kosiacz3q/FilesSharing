@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "utils.h"
+#include "api.h"
 
 ClientSocketManager::ClientSocketManager(ClientSocket&& socket)
     : mContext(std::make_shared<Context>(std::move(socket))) {
@@ -19,17 +20,36 @@ bool ClientSocketManager::isOutgoingBufferEmpty() {
     return mContext->mOutgoingBuffer.empty();
 }
 
+static uint32_t getIncomingBufferMessageSize(const std::vector<char>& buffer) {
+    uint8_t type, status;
+    uint32_t id, size;
+    (void) type;
+    (void) status;
+    (void) id;
+
+    assert(buffer.size() >= Api::PayloadInBytesOffset);
+    (void) from_bytes(buffer.begin(), buffer.end(), type, status, id, size);
+    return size;
+}
+
 bool ClientSocketManager::isIncomingBufferEmpty() {
-    mutex_guard _(mContext->mIncomingMutex);
-    return mContext->mIncomingBuffer.empty();
+    auto& buffer = mContext->mIncomingBuffer;
+    if (buffer.size() < Api::PayloadInBytesOffset)
+        return true;
+
+    auto size = getIncomingBufferMessageSize(buffer);
+    if (buffer.size() < Api::PayloadInBytesOffset + size)
+        return true;
+
+    return false;
 }
 
 std::vector<char> ClientSocketManager::pop() {
     mutex_guard _(mContext->mIncomingMutex);
     assert(!mContext->mIncomingBuffer.empty());
-    auto res = mContext->mIncomingBuffer.front();
-    mContext->mIncomingBuffer.erase(mContext->mIncomingBuffer.begin());
-    return res;
+    auto res = getFullIncomingMessage();
+    assert(res);
+    return *res;
 }
 
 void ClientSocketManager::push(std::vector<char> payload) {
@@ -60,8 +80,9 @@ void ClientSocketManager::loop() {
                {
                    mutex_guard _(ctx->mIncomingMutex);
                    auto res = ctx->mSocket.receive();
-                   if (res && res->size())
-                       ctx->mIncomingBuffer.push_back(*res);
+                   if (res && !res->empty())
+                       ctx->mIncomingBuffer.insert(ctx->mIncomingBuffer.end(), res->begin(),
+                                                   res->end());
                }
            }
            std::this_thread::sleep_for(5ms);
@@ -72,4 +93,20 @@ void ClientSocketManager::loop() {
 
 int ClientSocketManager::getClientId() const{
     return mContext->mSocket.getSocketFd();
+}
+
+core::optional<std::vector<char>> ClientSocketManager::getFullIncomingMessage() {
+    // Assumes lock on incomingbuffer. Cannot assert for it, because it's not a unique lock.
+    auto& buffer = mContext->mIncomingBuffer;
+    if (buffer.size() < Api::PayloadInBytesOffset)
+        return core::nullopt;
+
+    auto size = getIncomingBufferMessageSize(buffer);
+    if (buffer.size() < Api::PayloadInBytesOffset + size)
+        return core::nullopt;
+
+    auto it = buffer.begin() + Api::PayloadInBytesOffset + size;
+    std::vector<char> res(buffer.begin(), it);
+    buffer.erase(buffer.begin(), it);
+    return res;
 }
