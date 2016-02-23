@@ -60,7 +60,8 @@ void ClientSocketManager::loop() {
                {
                    mutex_guard _(ctx->mIncomingMutex);
                    auto res = ctx->mSocket.receive();
-                   if (res) ctx->mIncomingBuffer.push_back(*res);
+                   if (res && res->size())
+                       ctx->mIncomingBuffer.push_back(*res);
                }
            }
            std::this_thread::sleep_for(5ms);
