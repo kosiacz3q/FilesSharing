@@ -22,6 +22,9 @@ public:
         return dfm;
     }
 
+    void markAsDeleted(const std::string& toDeleted){
+        markAsDeleted({toDeleted});
+    };
     void markAsDeleted(const std::vector<std::string>& toDeleted);
     void removeFromDeleted(const std::vector<std::string>& existent);
     bool isMarkedAsDeleted(const std::string& path);

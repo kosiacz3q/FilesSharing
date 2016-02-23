@@ -30,6 +30,7 @@ set(SOURCE_FILES
     Actions/SendFileList.cpp
 	Actions/SendFile.cpp 
 	Actions/ReceiveFileFromClient.cpp
+        Actions/MarkAsDeletedAction.cpp
 )
 
 add_executable(server ${SOURCE_FILES} server.cpp)

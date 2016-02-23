@@ -50,8 +50,9 @@ int main(int argc, char** argv)
             std::cerr << "\n";
             for (auto &x : res->getPayload()) cerr << +x << " ";
             cerr << "\n";
-            break;
+
         }
+            break;
         case 2: //file list
         {
             GetFileList gfl(120);
@@ -66,8 +67,8 @@ int main(int argc, char** argv)
             for (auto &x : res->getPayload()) out << (char)x;
 
             cerr << "\n";
-            break;
         }
+            break;
         case 3: //single file request
         {
             std::string fileName = "testFile.file";
@@ -87,24 +88,53 @@ int main(int argc, char** argv)
             }
 
             cerr << "\n";
-            break;
         }
+            break;
+
         case 4: //send single file
         {
             std::string fileName = "testFile2.file";
-
             SendFileToServer sft(160, fileName, "", time(nullptr));
 
             cm.send(sft);
             printf("Request sent\n");
+
             auto res = cm.receiveBlocking<FileFromClient>(160);
-            res->dump();
+            printf("Response received\n");
+
+            if (res)
+                res->dump();
+            else
+                perror("Null response");
+
             std::cerr << "\n";
 
-            break;
         }
+            break;
+
+        case 5: //remove request
+        {
+            std::string fileName = "testFile2.file";
+            MarkAsDeleted mas(230, fileName);
+
+            cm.send(mas);
+            printf("Request sent\n");
+
+            auto res = cm.receiveBlocking<ServerDeletedResponse>(230);
+            printf("Response received\n");
+
+            if (res)
+                res->dump();
+            else
+                perror("Null response");
+
+            std::cerr << "\n";
+        }
+            break;
 
         default:
             break;
     }
+
+    printf("Goodbye\n");
 }
