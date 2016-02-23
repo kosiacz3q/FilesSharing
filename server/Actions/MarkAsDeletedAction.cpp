@@ -5,21 +5,22 @@
 
 #include <common/deleted_file_list.h>
 
-
 void MarkAsDeletedAction::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     auto sdr = ServerDeletedResponse(msg->getID());
 
     auto uMsg = unique_cast<MarkAsDeleted>(std::move(msg));
 
-    printf("Remove File [%s] request\n", uMsg->getPath().c_str());
+    auto path = "syncRoot/" + uMsg->getPath();
 
-    DeletedListManager::getInstance().markAsDeleted(uMsg->getPath());
+    printf("Remove File [%s] request\n", path.c_str());
 
-    FileScanner::remove(uMsg->getPath());
+    DeletedListManager::getInstance().markAsDeleted(path);
+
+    FileScanner::remove(path);
 
     ptr->send(sdr);
 
-    printf("File [%s] removed\n", uMsg->getPath().c_str());
+    printf("File [%s] removed\n", path.c_str());
 }
 
