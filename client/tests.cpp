@@ -149,11 +149,31 @@ TEST_CASE("GetFileByPath from bytes", "[api]") {
     REQUIRE(gfbp.getPath() == "xD.wtf");
 }
 
+TEST_CASE("SendFileToServer from file bytefication", "[api]") {
+
+    auto now = 23l;
+    SendFileToServer send(5, "bt.txt", "./test_dir_original", now);
+
+    std::vector<char> bytes = {
+            38, 0,
+            /* id */ 5, 0, 0, 0,
+            /*payload size*/ 19, 0, 0, 0,
+            /* name */ 'b', 't', '.', 't', 'x', 't', '\0',
+            /* time */ 23, 0, 0, 0, 0, 0, 0, 0,
+            /* file */ '1', '2', '3', 10
+    };
+
+    REQUIRE(send.getPayload().size() == bytes.size() - Api::PayloadInBytesOffset);
+    REQUIRE(send.to_bytes().size() == bytes.size());
+    REQUIRE(send.to_bytes() == bytes);
+}
+
 TEST_CASE("SendFileToServer from file", "[api]") {
     auto now = time(nullptr);
     SendFileToServer send(13, "aaa.txt", "./test_dir_original", now);
     REQUIRE(send.getPath() == "aaa.txt");
     REQUIRE(send.getTimestamp() == now);
+
 
     // xxd -p test_dir_original/aaa.txt
     REQUIRE(send.getFile() == hex_to_bytes("616c61206d61206b6f7461"));
