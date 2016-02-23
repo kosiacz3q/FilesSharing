@@ -1,7 +1,3 @@
-//
-// Created by lucas on 2/15/16.
-//
-
 #include "ClientHandler.h"
 
 ClientHandler::ClientHandler(CommunicationManagerPtr communicationManager, ActionsContainerPtr actionsContainer)

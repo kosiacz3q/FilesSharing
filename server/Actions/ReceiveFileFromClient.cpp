@@ -19,7 +19,9 @@ void ReceiveFileFromClient::handle(CommunicationManagerPtr ptr, std::unique_ptr<
     FileScanner::saveBytesAsFile(fullName, file);
     FileScanner::setModificationTime(fullName, uMsg->getTimestamp());
 
+    printf("File saved\n");
+
     ptr->send(ffc);
 
-    printf("File received");
+    printf("File received\n");
 }

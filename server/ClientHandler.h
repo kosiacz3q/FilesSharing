@@ -1,7 +1,3 @@
-//
-// Created by lucas on 2/15/16.
-//
-
 #ifndef SERVER_CLIENTHANDLER_H
 #define SERVER_CLIENTHANDLER_H
 

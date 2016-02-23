@@ -8,6 +8,7 @@ ActionsContainer::ActionsContainer()
 void ActionsContainer::registerAction(IActionPtr action) {
 
     actions.insert(std::make_pair(action->getType(), action));
+    printf("Action for type %i registered\n", action->getType());
 }
 
 void ActionsContainer::resolve(std::unique_ptr<Api> request, CommunicationManagerPtr cm) {
