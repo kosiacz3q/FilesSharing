@@ -202,15 +202,18 @@ TEST_CASE("MarkAsDeleted roundtrip", "[api]") {
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
     FileScanner sc("./test_dir_original");
 
-    auto files = std::set<std::string>();
+    REQUIRE(sc.getFileInfo().size() == 4);
+    std::set<std::string> files;
+    for (auto& x : sc.getFileInfo())
+        files.insert(x.path);
 
-    files.insert(sc.getFileInfo()[0].path);
-    files.insert(sc.getFileInfo()[1].path);
-    files.insert(sc.getFileInfo()[2].path);
+    for (auto& x : files)
+        std::cerr << "File:\t" << x << "\n";
 
-    REQUIRE(files.find("aaa.txt") != files.end());
-    REQUIRE(files.find("bbb/ddd/eee.txt") != files.end());
-    REQUIRE(files.find("bbb/ccc.txt") != files.end());
+    REQUIRE(files.count("aaa.txt"));
+    REQUIRE(files.count("bt.txt"));
+    REQUIRE(files.count("bbb/ddd/eee.txt"));
+    REQUIRE(files.count("bbb/ccc.txt"));
 }
 
 TEST_CASE("Files as list", "[file_scanner]") {
