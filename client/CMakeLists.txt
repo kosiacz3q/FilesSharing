@@ -21,10 +21,14 @@ set(SOURCE_FILES
 add_executable(client ${SOURCE_FILES} client.cpp)
 add_executable(tests ${SOURCE_FILES} tests.cpp)
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/modules)
+message("CMAKE_MODULE_PATH is ${CMAKE_MODULE_PATH}")
+
 include_directories(
 	../
 	./
 	${Boost_INCLUDE_DIRS}
+	${INOTIFY_INCLUDE_DIR}
 )
 
 set(Boost_USE_STATIC_LIBS ON)
@@ -32,7 +36,9 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.53.0 COMPONENTS system filesystem REQUIRED)
 
-find_package(Threads)
+find_package(Threads REQUIRED)
+
+find_package(Inotify REQUIRED)
 target_link_libraries(client ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 target_link_libraries(tests ${CMAKE_THREAD_LIBS_INIT} ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 message("CMAKE_BUILD_TYPE is ${CMAKE_BUILD_TYPE}")
