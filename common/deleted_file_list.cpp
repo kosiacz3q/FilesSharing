@@ -1,6 +1,8 @@
 #include "common/deleted_file_list.h"
 
-static const auto& DeleteFileListName = ".deleted_filed";
+#include <iostream>
+
+static const auto& DeletedFileListName = ".deleted_files";
 
 DeletedFileList::DeletedFileList() {
     (void) DeletedListManager::getInstance(); // read list from file;
@@ -36,7 +38,7 @@ std::vector<std::string> DeletedFileList::markAsExistent(FileScanner newest) {
 }
 
 void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted) {
-    std::ofstream file(DeleteFileListName, std::ios::app);
+    std::ofstream file(DeletedFileListName, std::ios::app);
     assert(file.is_open() && "Cannot open file");
 
     for (auto& x : toDeleted) {
@@ -50,11 +52,15 @@ void DeletedListManager::markAsDeleted(const std::vector<std::string>& toDeleted
 void DeletedListManager::markAsExistent(const std::vector<std::string>& existent) {
     for (auto& x : existent) {
         auto it = std::find(mContent.begin(), mContent.end(), x);
+        std::cerr << "Erasing:\t" << x << "\n";
         if (it != mContent.end())
             mContent.erase(it);
     }
 
-    std::fstream file(DeleteFileListName, std::ios::trunc);
+    FileScanner::remove(DeletedFileListName);
+    std::fstream file(DeletedFileListName, std::ios::trunc);
+    assert(file.is_open());
+    assert(file.good());
     for (auto& x : mContent)
         file << x << "\n";
 }
@@ -69,7 +75,10 @@ DeletedListManager::DeletedListManager() {
 
 void DeletedListManager::rereadFile() {
     mContent.clear();
-    std::fstream file(DeleteFileListName);
+    std::cerr << "Rereading " << DeletedFileListName << "\n";
+
+    std::fstream file(DeletedFileListName, std::ios::trunc);
+    if (!FileScanner::exists(DeletedFileListName)) std::cerr << "File does not exits\n";
     std::string line;
     while (std::getline(file, line))
         if (!line.empty())

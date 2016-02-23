@@ -59,13 +59,13 @@ ClientLogic::Error ClientLogic::loop() {
     while (true) {
         FileScanner scanner(mRoot);
 
-        GetFileList getFileList(nextID());
-        mCM.send(getFileList);
-        auto fileList = mCM.receiveBlocking<ServerFileList>(currentID());
-        if (!fileList) return Error::Timeout;
-        auto& list = fileList->getFileList();
-        FileScanner remoteFiles(::to_bytes_impl(list));
-        auto res = onIncomingFileList(remoteFiles);
+//        GetFileList getFileList(nextID());
+//        mCM.send(getFileList);
+//        auto fileList = mCM.receiveBlocking<ServerFileList>(currentID());
+//        if (!fileList) return Error::Timeout;
+//        auto& list = fileList->getFileList();
+//        FileScanner remoteFiles(::to_bytes_impl(list));
+        auto res = onIncomingFileList(scanner);//remoteFiles);
         if (res != Error::NoError) return res;
 
         std::this_thread::sleep_for(10s);
@@ -88,28 +88,28 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
 
     mDeletedList.update(myFiles);
 
-    FileDiff diff(myFiles, remoteFiles);
-
-    GetDeletedList requestDeleted(nextID());
-    mCM.send(requestDeleted);
-    auto responseDeleted = mCM.receiveBlocking<ServerDeletedList>(currentID());
-    if (!responseDeleted) return Error::Timeout;
-
-    const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
-    std::vector<std::string> toDelete;
-    for (auto& x : deletedByUser) {
-        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x)
-                != remotelyDeleted.end()) {
-            toDelete.push_back(x);
-        }
-    }
-    auto deleteRes = deleteFiles(extract(toDelete, [](auto& x) { return FileInfo{x, 0}; }));
-    if (deleteRes != Error::NoError) return deleteRes;
-
-    auto toAdd = diff.getModifiedOrAdded();
-
-    auto requestRes = requestAndSaveNewFiles(toAdd);
-    if (requestRes != Error::NoError) return requestRes;
+//    FileDiff diff(myFiles, remoteFiles);
+//
+//    GetDeletedList requestDeleted(nextID());
+//    mCM.send(requestDeleted);
+//    auto responseDeleted = mCM.receiveBlocking<ServerDeletedList>(currentID());
+//    if (!responseDeleted) return Error::Timeout;
+//
+//    const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
+//    std::vector<std::string> toDelete;
+//    for (auto& x : deletedByUser) {
+//        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x)
+//                != remotelyDeleted.end()) {
+//            toDelete.push_back(x);
+//        }
+//    }
+//    auto deleteRes = deleteFiles(extract(toDelete, [](auto& x) { return FileInfo{x, 0}; }));
+//    if (deleteRes != Error::NoError) return deleteRes;
+//
+//    auto toAdd = diff.getModifiedOrAdded();
+//
+//    auto requestRes = requestAndSaveNewFiles(toAdd);
+//    if (requestRes != Error::NoError) return requestRes;
 
     return Error::NoError;
 }
