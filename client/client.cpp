@@ -136,5 +136,6 @@ int main(int argc, char** argv)
             break;
     }
 
-    printf("Goodbye\n");
+    std::this_thread::sleep_for(std::chrono::milliseconds(8));
+    std::cout << "Client's gracefully stopped." << std::endl;
 }
