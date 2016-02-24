@@ -12,6 +12,7 @@ public:
     DeletedFileList();
     std::vector<std::string> markAsDeleted(const std::vector<std::string>& toDelete);
     std::vector<std::string> markAsDeleted(FileScanner newest);
+    std::vector<std::string> markAsExistent(const std::vector<std::string>& toAdd);
     std::vector<std::string> markAsExistent(FileScanner newest);
     void update(FileScanner newest) { mLast = std::move(newest); }
 

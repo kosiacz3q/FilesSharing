@@ -114,7 +114,17 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     {
         auto res = requestAndSaveNewFiles(remotelyAddedOrModified);
         if (res != Error::NoError) return res;
+        auto marked = mDeletedList.markAsExistent(extract(remotelyAddedOrModified,
+                                            [] (auto& x) { return x.path; }));
+        std::cerr << "Marked as deleted:\t";
+        for (auto& x : marked) std::cerr << x << ", ";
+        std::cerr << "\n";
     }
+
+    diff = FileDiff(remoteFiles, myFiles);
+    auto addedByMe = diff.getModifiedOrAdded();
+    auto sendRes = sendAddRequests(extract(addedByMe, [](auto& x) { return x.path; }), remoteFiles);
+    if (sendRes != Error::NoError) return sendRes;
 
     return Error::NoError;
 }
@@ -179,6 +189,9 @@ ClientLogic::Error ClientLogic::sendAddRequests(const std::vector<std::string>& 
                                                 const FileScanner& remote) {
     for (auto& x : toAdd) {
         auto fullPath = FileScanner::joinPaths(mRoot, x);
+        if (!FileScanner::exists(fullPath))
+            continue;
+
         auto timestamp = FileScanner::getModificationTime(fullPath);
         if (!remote.contains(x) || remote.getFileInfo(x).timestamp < timestamp) {
             std::cerr << "Sending new file to server:\t" << x << "\n";
