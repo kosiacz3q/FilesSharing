@@ -1,7 +1,7 @@
 #include "GetServerDeletedList.h"
 
-#include <common/deleted_file_list.h>
-#include <common/server_api.h>
+#include "common/deleted_file_list.h"
+#include "common/server_api.h"
 
 void GetServerDeletedList::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg){
 

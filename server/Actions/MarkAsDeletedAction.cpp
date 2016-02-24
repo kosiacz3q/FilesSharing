@@ -3,7 +3,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include <common/deleted_file_list.h>
+#include "common/deleted_file_list.h"
 
 void MarkAsDeletedAction::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
@@ -11,7 +11,7 @@ void MarkAsDeletedAction::handle(CommunicationManagerPtr ptr, std::unique_ptr<Ap
 
     auto uMsg = unique_cast<MarkAsDeleted>(std::move(msg));
 
-    auto fullPath = "./syncRoot/" + uMsg->getPath();
+    auto fullPath = FileScanner::joinPaths("./syncRoot/", uMsg->getPath());
 
     printf("Remove File [%s] request\n", fullPath.c_str());
 

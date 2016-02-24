@@ -2,8 +2,8 @@
 
 #include <chrono>
 
-#include "utils.h"
-#include "api.h"
+#include "common/utils.h"
+#include "common/api.h"
 
 ClientSocketManager::ClientSocketManager(ClientSocket&& socket)
     : mContext(std::make_shared<Context>(std::move(socket))) {

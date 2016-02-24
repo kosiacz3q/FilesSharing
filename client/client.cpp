@@ -18,8 +18,8 @@ int main(int argc, char** argv)
     const char* rootFolder = "./test_dir";
 
     if (argc == 4) {
-        sscanf(argv[1], "%hu", &port);
-        ip = argv[2];
+        ip = argv[1];
+        sscanf(argv[2], "%hu", &port);
         rootFolder = argv[3];
     } else if (argc > 4) assert(false && "Too many arguments");
 

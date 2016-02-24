@@ -1,7 +1,7 @@
 #ifndef SERVER_GETSERVERDELETEDLIST_H
 #define SERVER_GETSERVERDELETEDLIST_H
 
-#include <common/client_api.h>
+#include "common/client_api.h"
 
 #include "IAction.h"
 

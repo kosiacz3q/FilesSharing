@@ -3,8 +3,8 @@
 #include <iostream>
 #include <thread>
 
-#include "../common/client_api.h"
-#include "../common/server_api.h"
+#include "common/client_api.h"
+#include "common/server_api.h"
 
 void CommunicationManager::send(const Api& message) {
     mSocketManager.push(message.to_bytes());

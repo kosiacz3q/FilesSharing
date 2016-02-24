@@ -2,9 +2,9 @@
 #define SERVER_SENDFILELIST_H
 
 
-#include <common/api.h>
-#include <common/client_api.h>
-#include <common/communication_manager.h>
+#include "common/api.h"
+#include "common/client_api.h"
+#include "common/communication_manager.h"
 
 #include "IAction.h"
 

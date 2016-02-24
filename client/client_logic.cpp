@@ -118,7 +118,7 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
                 == deletedByUser.end())
                 toDownload.push_back(x);
         }
-         
+
         auto res = requestAndSaveNewFiles(toDownload);
         if (res != Error::NoError) return res;
         auto marked = mDeletedList.markAsExistent(extract(remotelyAddedOrModified,

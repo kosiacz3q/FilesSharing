@@ -1,4 +1,4 @@
-#include "../common/server_api.h"
+#include "common/server_api.h"
 
 #include <iostream>
 

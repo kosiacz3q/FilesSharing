@@ -1,11 +1,11 @@
 #include <boost/algorithm/string.hpp>
 
 #include <iostream>
-#include <server/Actions/SendFileList.h>
-#include <server/Actions/SendFile.h>
-#include <server/Actions/ReceiveFileFromClient.h>
-#include <server/Actions/MarkAsDeletedAction.h>
-#include <server/Actions/GetServerDeletedList.h>
+#include "server/Actions/SendFileList.h"
+#include "server/Actions/SendFile.h"
+#include "server/Actions/ReceiveFileFromClient.h"
+#include "server/Actions/MarkAsDeletedAction.h"
+#include "server/Actions/GetServerDeletedList.h"
 #include "ServerManager.h"
 
 #include "Actions/SendTimeStamp.h"
@@ -14,9 +14,13 @@ using namespace std;
 
 void checkForExitCommand();
 
-int main()
+int main(int argc, char** argv)
 {
-    constexpr int port = 4096;
+    unsigned short port = 4096;
+    if (argc == 2) {
+        sscanf(argv[2], "%hu", &port);
+    }
+    else if (argc >=2) assert(false && "Too many arguments");
 
     auto ac = std::make_shared<ActionsContainer>();
 
@@ -50,5 +54,5 @@ void checkForExitCommand(){
     do {
         std::cin >> t;
         boost::algorithm::to_lower(t);
-    }while(exitCommand.find(t) == exitCommand.end());
+    } while (exitCommand.find(t) == exitCommand.end());
 }

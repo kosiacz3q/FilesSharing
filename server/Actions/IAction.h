@@ -1,7 +1,7 @@
 #ifndef SERVER_IACTION_H
 #define SERVER_IACTION_H
 
-#include <common/communication_manager.h>
+#include "common/communication_manager.h"
 
 
 class IAction{
