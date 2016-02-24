@@ -136,6 +136,7 @@ ClientLogic::Error ClientLogic::requestAndSaveNewFile(FileInfo file, const std::
     mCM.send(get);
     auto response = mCM.receiveBlocking<FileFromServer>(currentID());
     if (!response) return Error::Timeout;
+    if (response->getStatus() != 0) return Error::NoError;
 
     const auto& fileAsBytes = response->getFile();
     FileScanner::saveBytesAsFile(fullPath, fileAsBytes);

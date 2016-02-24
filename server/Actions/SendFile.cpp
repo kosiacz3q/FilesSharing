@@ -8,10 +8,11 @@ void SendFile::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
 
     std::string pathToRequestedFile(msg->getPayload().data());
 
-    printf("Requested file %s\n", pathToRequestedFile.c_str());
+    std::string fullPath = FileScanner::joinPaths("./syncRoot/", pathToRequestedFile);
+    printf("Requested file %s\n", fullPath.c_str());
 
-    if(!FileScanner::exists(pathToRequestedFile)){
-        printf("File [%s] does not exists.", pathToRequestedFile.c_str());
+    if(!FileScanner::exists(fullPath)){
+        printf("File [%s] does not exists.", fullPath.c_str());
         ptr->send(FileFromServer(msg->getID(), 1));
         return;
     }

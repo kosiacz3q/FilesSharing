@@ -38,9 +38,10 @@ ServerFileList::ServerFileList(const std::vector<char>& bytes)
 
 FileFromServer::FileFromServer(uint32_t id, const std::string& path, const std::string& root)
         : Api(type, 0, id) {
-    auto fullPath = FileScanner::joinPaths(path, root);
+    auto fullPath = FileScanner::joinPaths(root, path);
     assert(FileScanner::exists(fullPath));
     auto bytes = FileScanner::getFileAsBytes(fullPath);
+    std::cerr << "File:\t" << fullPath << " size:\t" << bytes.size() << "\n";
     setPayload(bytes);
 }
 
