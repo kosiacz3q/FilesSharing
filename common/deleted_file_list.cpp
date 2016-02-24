@@ -73,7 +73,7 @@ void DeletedListManager::markAsExistent(const std::vector<std::string>& existent
     assert(file.good());
     for (auto& x : mContent) {
         file << x << "\n";
-        std::cerr << "Restored file from memorized deleted:\t" << x << "\n";
+        //std::cerr << "Restored file from memorized deleted:\t" << x << "\n";
     }
 }
 

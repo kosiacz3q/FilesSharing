@@ -8,9 +8,9 @@
 
 void CommunicationManager::send(const Api& message) {
     mSocketManager.push(message.to_bytes());
-    std::cerr << "Message:\t{";
-    for (auto x : message.to_bytes()) std::cerr << +x << ", ";
-    std::cerr << "}\n";
+    //std::cerr << "Message:\t{";
+    //for (auto x : message.to_bytes()) std::cerr << +x << ", ";
+    //std::cerr << "}\n";
 }
 
 std::unique_ptr<Api> CommunicationManager::receive(uint32_t id) {

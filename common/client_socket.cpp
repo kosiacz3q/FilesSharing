@@ -76,15 +76,29 @@ ClientSocket& ClientSocket::operator=(ClientSocket&& other) {
     return *this;
 }
 
+static bool sendAll(int socket, const void *buffer, size_t length) {
+    const char *ptr = (const char*) buffer;
+    while (length > 0)
+    {
+        int i = send(socket, ptr, length, 0);
+        if (i < 1) {
+            perror("Could not send all data.\t");
+            return false;
+        }
+        ptr += i;
+        length -= i;
+    }
+    return true;
+}
+
 core::optional<size_t> ClientSocket::send(const void* payload, size_t size) {
     if (!isValid()) return core::nullopt;
-    ssize_t res;
-    if ((res = ::send(mSocketDesc, payload, size, 0)) < 0) {
-        perror("Could not sent");
+
+    if (!sendAll(mSocketDesc, payload, size)) {
         return core::nullopt;
     }
 
-    return size_t(res);
+    return size;
 }
 
 core::optional<size_t> ClientSocket::send(const std::vector<char>& payload) {
@@ -95,6 +109,18 @@ core::optional<std::vector<char>> ClientSocket::receive() {
     if (!isValid()) return core::nullopt;
 
     auto res = recv(mSocketDesc, mReceiveBuffer.data(), mReceiveBuffer.size(), 0);
+    if (res == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) {
+            return core::nullopt;
+        }
+        else {
+            perror("Error while receiving.\t");
+            close(mSocketDesc);
+            mMode = Mode::Invalid;
+            std::cerr << "Socket closed.\n";
+            std::exit(2);
+        }
+    }
     if (res <= 0) return core::nullopt;
 
     return std::vector<char>(mReceiveBuffer.begin(), mReceiveBuffer.begin() + res);
