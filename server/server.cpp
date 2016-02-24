@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 {
     unsigned short port = 4096;
     if (argc == 2) {
-        sscanf(argv[2], "%hu", &port);
+        sscanf(argv[1], "%hu", &port);
     }
     else if (argc >=2) assert(false && "Too many arguments");
 
