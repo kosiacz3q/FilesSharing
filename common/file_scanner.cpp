@@ -56,7 +56,6 @@ std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
     os >> sc;
     char space;
     os.get(space);
-    assert(space == ' ');
     char buffer[4096] = {};
     os.getline(buffer, sizeof(buffer));
     fileInfo.path = std::string(buffer);
