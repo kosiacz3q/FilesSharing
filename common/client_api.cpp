@@ -26,7 +26,7 @@ void SendFileToServer::setPayload(std::vector<char> payload) {
     auto it = from_bytes(getPayload().begin(), end, mPath);
     it = from_bytes(it, end, mTimestamp);
     mFileBegin = it;
-    assert(getPayload().back() == '\0');
+    //assert(getPayload().back() == '\0');
     mFileEnd = getPayload().end();
     assert(mFileBegin <= mFileEnd); // File can be empty, thus begin == end.
 }
