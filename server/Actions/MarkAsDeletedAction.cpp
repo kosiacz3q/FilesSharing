@@ -15,14 +15,13 @@ void MarkAsDeletedAction::handle(CommunicationManagerPtr ptr, std::unique_ptr<Ap
 
     printf("Remove File [%s] request\n", fullPath.c_str());
 
+    DeletedListManager::getInstance().markAsDeleted(uMsg->getPath());
     if(!FileScanner::exists(fullPath)){
         printf("File [%s] does not exists.", fullPath.c_str());
         sdr.setStatus(1);
         ptr->send(sdr);
         return;
     }
-
-    DeletedListManager::getInstance().markAsDeleted(uMsg->getPath());
 
     FileScanner::remove(fullPath);
 

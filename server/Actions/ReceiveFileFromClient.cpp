@@ -2,6 +2,7 @@
 
 #include "ReceiveFileFromClient.h"
 #include "common/file_scanner.h"
+#include "common/deleted_file_list.h"
 
 void ReceiveFileFromClient::handle(CommunicationManagerPtr ptr, std::unique_ptr<Api> msg) {
     FileFromClient ffc(msg->getID());
@@ -16,6 +17,7 @@ void ReceiveFileFromClient::handle(CommunicationManagerPtr ptr, std::unique_ptr<
 
     FileScanner::saveBytesAsFile(path, file);
     FileScanner::setModificationTime(path, uMsg->getTimestamp());
+    (void) DeletedListManager::getInstance().markAsExistent({path});
 
     ptr->send(ffc);
 

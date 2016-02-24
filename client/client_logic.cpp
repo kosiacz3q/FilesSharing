@@ -112,7 +112,14 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     // Add remotely added/modified.
     std::vector<FileInfo> remotelyAddedOrModified = diff.getModifiedOrAdded();
     {
-        auto res = requestAndSaveNewFiles(remotelyAddedOrModified);
+        std::vector<FileInfo> toDownload;
+        for (auto& x : remotelyAddedOrModified) {
+            if (std::find(deletedByUser.begin(), deletedByUser.end(), x.path)
+                == deletedByUser.end())
+                toDownload.push_back(x);
+        }
+         
+        auto res = requestAndSaveNewFiles(toDownload);
         if (res != Error::NoError) return res;
         auto marked = mDeletedList.markAsExistent(extract(remotelyAddedOrModified,
                                             [] (auto& x) { return x.path; }));
