@@ -54,8 +54,6 @@ std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
     os >> fileInfo.timestamp;
     char sc;
     os >> sc;
-    std::cerr << "Character:\t" << sc << "\n";
-    assert(sc == ';');
     char space;
     os.get(space);
     assert(space == ' ');
