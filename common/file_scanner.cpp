@@ -65,7 +65,9 @@ std::istream& operator>>(std::istream& os, FileInfo& fileInfo) {
 
 FileScanner::FileScanner(const std::string& path)
     : mPath(path) {
-    assert(fs::exists(path));
+    if (!fs::exists(path)) {
+        fs::create_directory(path);
+    }
     assert(fs::is_directory(path));
     for (auto it : recursive_directory_range(path)) {
         if (fs::is_regular_file(it.status())) {

@@ -87,7 +87,7 @@ IT from_bytes(IT begin, IT end, First& first, Rest&... rest) {
 
 template<typename IT>
 IT from_bytes(IT begin, IT end, std::string& first) {
-    assert(std::find(begin, end, '0') != end);
+    //assert(std::find(begin, end, '0') != end);
     assert(begin < end);
     (void) end;
     const auto len = strlen(&*begin);
