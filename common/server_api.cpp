@@ -15,7 +15,7 @@ ServerTime::ServerTime(uint32_t id)
 ServerTime::ServerTime(const std::vector<char>& bytes)
         : Api(bytes) {
     assert(getType() == type);
-    assert(getPayload().size() != sizeof(time(nullptr)) && "No timestamp data");
+    assert(getPayload().size() == sizeof(time(nullptr)) && "No timestamp data");
     (void) from_bytes(getPayload().begin(), getPayload().end(), mTimestamp);
     std::cerr << "Deserialized time:\t" << mTimestamp << "\n";
 }
