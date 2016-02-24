@@ -65,8 +65,8 @@ ClientLogic::Error ClientLogic::loop() {
         FileScanner remoteFiles(::to_bytes_impl(list));
         auto res = onIncomingFileList(remoteFiles);//remoteFiles);
         if (res != Error::NoError) return res;
-
-        std::this_thread::sleep_for(10s);
+        
+        std::this_thread::sleep_for(10ms);
     }
 
     return Error::NoError;

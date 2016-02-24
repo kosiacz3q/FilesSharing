@@ -63,32 +63,33 @@ void ClientSocketManager::stop() {
 
 
 void ClientSocketManager::loop() {
-    using namespace std::chrono_literals;
-    std::thread looper([ctx = mContext]{
+    std::thread senderLoop([ctx = mContext]{
        while (!ctx->mStop) {
-           {
+           if (!ctx->mOutgoingBuffer.empty()) {
+               core::optional<size_t> res;
                {
                    mutex_guard _(ctx->mOutgoingMutex);
-                   if (!ctx->mOutgoingBuffer.empty()) {
-                       auto res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
-                       if (res) {
-                           assert(*res == ctx->mOutgoingBuffer.front().size());
-                           ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
-                       }
-                   }
+                   res = ctx->mSocket.send(ctx->mOutgoingBuffer.front());
                }
-               {
-                   mutex_guard _(ctx->mIncomingMutex);
-                   auto res = ctx->mSocket.receive();
-                   if (res && !res->empty())
-                       ctx->mIncomingBuffer.insert(ctx->mIncomingBuffer.end(), res->begin(),
-                                                   res->end());
+               if (res) {
+                   assert(*res == ctx->mOutgoingBuffer.front().size());
+                   ctx->mOutgoingBuffer.erase(ctx->mOutgoingBuffer.begin());
                }
            }
-           std::this_thread::sleep_for(5ms);
        }
     });
-    looper.detach();
+    senderLoop.detach();
+
+    std::thread receiverLoop([ctx = mContext]{
+        while (!ctx->mStop) {
+            auto res = ctx->mSocket.receive();
+            if (res && !res->empty()) {
+                ctx->mIncomingBuffer.insert(ctx->mIncomingBuffer.end(), res->begin(), res->end());
+                mutex_guard _(ctx->mIncomingMutex);
+            }
+        }
+    });
+    receiverLoop.detach();
 }
 
 int ClientSocketManager::getClientId() const{

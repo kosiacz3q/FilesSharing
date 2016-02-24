@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fcntl.h>
 
-static bool SetSocketBlockingEnabled(int fd, bool blocking) {
+static bool setSocketBlockingEnabled(int fd, bool blocking) {
     if (fd < 0) return false;
 
     int flags = fcntl(fd, F_GETFL, 0);
@@ -11,7 +11,6 @@ static bool SetSocketBlockingEnabled(int fd, bool blocking) {
     flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
     return fcntl(fd, F_SETFL, flags) == 0;
 }
-
 
 ClientSocket::ClientSocket(unsigned short port, core::string_view address) {
     mSocketDesc = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,10 +31,10 @@ ClientSocket::ClientSocket(unsigned short port, core::string_view address) {
         return;
     }
 
-    if (!SetSocketBlockingEnabled(mSocketDesc, false)) {
-        perror("Could not set non-blocking");
-        return;
-    }
+//    if (!setSocketBlockingEnabled(mSocketDesc, false)) {
+//        perror("Could not set non-blocking");
+//        return;
+//    }
 
     mMode = Mode::Initialized;
 }
@@ -47,7 +46,7 @@ ClientSocket::ClientSocket(const int socketFd, const unsigned short port, core::
     mServer.sin_family = AF_INET;
     mServer.sin_port = htons(port);
 
-    if (!SetSocketBlockingEnabled(mSocketDesc, false)) {
+    if (!setSocketBlockingEnabled(mSocketDesc, false)) {
         perror("Could not set non-blocking");
         return;
     }
