@@ -9,7 +9,7 @@ public:
     // What the other has changed in relation to mine.
     FileDiff(const std::vector<FileInfo>& mine, const std::vector<FileInfo>& other);
     FileDiff(const FileScanner& mine, const FileScanner& other)
-            : FileDiff(mine.getFileInfo(), other.getFileInfo()) {}
+            : FileDiff(mine.getFileList(), other.getFileList()) {}
 
     DEFAULT_MOVE_COPY(FileDiff);
 

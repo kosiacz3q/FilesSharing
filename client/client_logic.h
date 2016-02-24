@@ -29,6 +29,9 @@ private:
     Error requestAndSaveNewFiles(const std::vector<FileInfo>& toAdd);
     Error requestAndSaveNewFile(FileInfo file, const std::string& fullPath);
 
+    Error sendDeleteRequests(const std::vector<std::string>& toDelete, const FileScanner& remote);
+    Error sendAddRequests(const std::vector<std::string>& toAdd, const FileScanner& remote);
+
     CommunicationManager& mCM;
     DeletedFileList mDeletedList;
     std::string mRoot;

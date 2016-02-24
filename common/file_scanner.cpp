@@ -128,6 +128,11 @@ void FileScanner::remove(const std::string& path) {
     fs::remove(path);
 }
 
+time_t FileScanner::getModificationTime(const std::string& path) {
+    assert(exists(path));
+    return fs::last_write_time(path);
+}
+
 void FileScanner::setModificationTime(const std::string& path, FileInfo::TimeStampType time) {
     assert(exists(path));
     fs::last_write_time(path, time);
@@ -164,4 +169,19 @@ std::vector<FileInfo> FileScanner::getAddedSince(const FileScanner& previous) co
     }
 
     return added;
+}
+
+bool FileScanner::contains(const std::string& path) const {
+    for (auto& x : mFiles)
+        if (x.path == path)
+            return true;
+    return false;
+}
+
+FileInfo FileScanner::getFileInfo(const std::string& path) const {
+    for (auto& x : mFiles)
+        if (x.path == path)
+            return x;
+    assert(false);
+    return {};
 }

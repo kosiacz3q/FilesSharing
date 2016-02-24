@@ -212,9 +212,9 @@ TEST_CASE("MarkAsDeleted roundtrip", "[api]") {
 TEST_CASE("FileScanner full directory scan", "[file_scanner]") {
     FileScanner sc("./test_dir_original");
 
-    REQUIRE(sc.getFileInfo().size() == 4);
+    REQUIRE(sc.getFileList().size() == 4);
     std::set<std::string> files;
-    for (auto& x : sc.getFileInfo())
+    for (auto& x : sc.getFileList())
         files.insert(x.path);
 
     for (auto& x : files)
@@ -239,7 +239,7 @@ TEST_CASE("FileScanner roundtrip", "[file_scanner]") {
     std::string list = fs.asFileList();
     auto bytes = to_bytes(list);
     FileScanner second(bytes);
-    REQUIRE(fs.getFileInfo() == second.getFileInfo());
+    REQUIRE(fs.getFileList() == second.getFileList());
 }
 
 TEST_CASE("FileDiff additions", "[file_diff]") {

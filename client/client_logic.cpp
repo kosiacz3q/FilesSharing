@@ -85,16 +85,21 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     std::cerr << "\n";
 
     mDeletedList.update(myFiles);
+    // Delete remote files if I also deleted them:
+    sendDeleteRequests(deletedByUser, remoteFiles);
 
-    FileDiff diff(myFiles, remoteFiles);
+    // Upload new files that were previously deleted and now are either not at the remote or newer.
+    sendAddRequests(markedExistent, remoteFiles);
 
     GetDeletedList requestDeleted(nextID());
     mCM.send(requestDeleted);
     auto responseDeleted = mCM.receiveBlocking<ServerDeletedList>(currentID());
     if (!responseDeleted) return Error::Timeout;
 
+    FileDiff diff(myFiles, remoteFiles);
+    /*
     const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
-    std::vector<std::string> toDelete;
+
     for (auto& x : deletedByUser) {
         if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x)
                 != remotelyDeleted.end()) {
@@ -108,7 +113,7 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
 
     auto requestRes = requestAndSaveNewFiles(toAdd);
     if (requestRes != Error::NoError) return requestRes;
-
+*/
     return Error::NoError;
 }
 
@@ -154,3 +159,32 @@ ClientLogic::Error ClientLogic::requestAndSaveNewFiles(const std::vector<FileInf
     return Error::NoError;
 }
 
+ClientLogic::Error ClientLogic::sendDeleteRequests(const std::vector<std::string>& toDelete,
+                                                   const FileScanner& remote) {
+    for (auto& x : toDelete)
+        if (remote.contains(x)) {
+            std::cerr << "Sending delete request:\t" << x << "\n";
+            MarkAsDeleted del(nextID(), x);
+            mCM.send(del);
+
+            auto res = mCM.receiveBlocking<ServerDeletedResponse>(currentID());
+            if (!res) return Error::Timeout;
+        }
+    return Error::NoError;
+}
+
+ClientLogic::Error ClientLogic::sendAddRequests(const std::vector<std::string>& toAdd,
+                                                const FileScanner& remote) {
+    for (auto& x : toAdd) {
+        auto timestamp = FileScanner::getModificationTime(x);
+        if (!remote.contains(x) || remote.getFileInfo(x).timestamp < timestamp) {
+            std::cerr << "Sending new file to server:\t" << x << "\n";
+            SendFileToServer send(nextID(), x, mRoot, timestamp);
+            mCM.send(send);
+
+            auto res = mCM.receiveBlocking<FileFromClient>(currentID());
+            if (!res) return Error::Timeout;
+        }
+    }
+    return Error::NoError;
+}

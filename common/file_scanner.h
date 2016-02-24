@@ -33,11 +33,15 @@ public:
 
     DEFAULT_MOVE_COPY(FileScanner);
 
+    bool contains(const std::string& path) const;
+    FileInfo getFileInfo(const std::string& path) const;
+
     static std::vector<char> getFileAsBytes(const std::string& path);
     static void saveBytesAsFile(const std::string& path, const std::vector<char>& bytes);
     static bool exists(const std::string& path);
     static void rename(const std::string& from, const std::string& to);
     static void remove(const std::string& path);
+    static time_t getModificationTime(const std::string& path);
     static void setModificationTime(const std::string& path, FileInfo::TimeStampType time);
     static std::string joinPaths(const std::string& prefix, const std::string& sufix);
 
@@ -45,7 +49,7 @@ public:
     std::vector<FileInfo> getAddedSince(const FileScanner& previous) const;
 
     auto getPath() const { return mPath; }
-    const auto& getFileInfo() const { return mFiles; }
+    const auto& getFileList() const { return mFiles; }
 
     std::string asFileList() const;
 
