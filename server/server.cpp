@@ -10,6 +10,8 @@
 
 #include "Actions/SendTimeStamp.h"
 
+#include <boost/filesystem.hpp>
+
 using namespace std;
 
 void checkForExitCommand();
@@ -21,6 +23,8 @@ int main(int argc, char** argv)
         sscanf(argv[1], "%hu", &port);
     }
     else if (argc >=2) assert(false && "Too many arguments");
+
+    boost::filesystem::create_directory("syncRoot");
 
     auto ac = std::make_shared<ActionsContainer>();
 

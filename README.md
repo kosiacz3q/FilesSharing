@@ -11,4 +11,9 @@ Krótka idea projektu:
 - Pliki w katalogu synchronizacyjnym klienta można modyfikować, a serwera nie. Nie było testowane na plikach > 1 MB.
 - Klienta można uruchomić bez parametrów, wówczas szuka serwera na localhoscie:4096 i używa .test_dir jako folder do synchronizacji.
 - Klienta można uruchomić z 3 parametrami, oznaczającymi kolejno ip serwera, port i scieżkę do synchronizacji
-- Opisz serwer, Łukasz
+
+- Serwer można uruchomić bez parametrów, wówczas nasłuchuje na porce 4096
+- Serwer można uruchomić z 1 parametrem którym jest numer portu do nasłuchiwania
+- synchronizowanym katalogiem jest syncRoot
+- Serwer równolegle obsługuje żądania klientów
+- Pracę serwera kończymy wpisując q, quit lub exit, wielkość liter nie ma znaczenia
