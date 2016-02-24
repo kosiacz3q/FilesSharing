@@ -11,23 +11,23 @@ void MarkAsDeletedAction::handle(CommunicationManagerPtr ptr, std::unique_ptr<Ap
 
     auto uMsg = unique_cast<MarkAsDeleted>(std::move(msg));
 
-    auto path = "syncRoot/" + uMsg->getPath();
+    auto fullPath = "./syncRoot/" + uMsg->getPath();
 
-    printf("Remove File [%s] request\n", path.c_str());
+    printf("Remove File [%s] request\n", fullPath.c_str());
 
-    if(!FileScanner::exists(path)){
-        printf("File [%s] does not exists.", path.c_str());
+    if(!FileScanner::exists(fullPath)){
+        printf("File [%s] does not exists.", fullPath.c_str());
         sdr.setStatus(1);
         ptr->send(sdr);
         return;
     }
 
-    DeletedListManager::getInstance().markAsDeleted(path);
+    DeletedListManager::getInstance().markAsDeleted(uMsg->getPath());
 
-    FileScanner::remove(path);
+    FileScanner::remove(fullPath);
 
     ptr->send(sdr);
 
-    printf("File [%s] removed\n", path.c_str());
+    printf("File [%s] removed\n", fullPath.c_str());
 }
 

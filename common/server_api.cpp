@@ -52,7 +52,7 @@ FileFromServer::FileFromServer(uint32_t id, uint32_t status)
 ServerDeletedList::ServerDeletedList(uint32_t id, const std::vector<std::string>& paths)
         : Api(type, 0, id) {
 
-    std::vector<char> result = {};
+    std::vector<char> result;
 
     for (auto s : paths)
         result = join_vectors({result, ::to_bytes(s)});

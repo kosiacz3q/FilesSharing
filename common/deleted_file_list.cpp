@@ -11,19 +11,23 @@ DeletedFileList::DeletedFileList() {
     (void) DeletedListManager::getInstance(); // read list from file;
 }
 
-std::vector<std::string> DeletedFileList::markAsDeleted(FileScanner newest) {
-    auto deletedCandidates = newest.getDeletedSince(mLast);
+std::vector<std::string> DeletedFileList::markAsDeleted(const std::vector<std::string>& toDelete) {
     std::vector<std::string> toMarkAsDeleted;
 
-    for (auto& x : deletedCandidates) {
-        if (DeletedListManager::getInstance().isMarkedAsDeleted(x.path))
+    for (auto& x : toDelete) {
+        if (DeletedListManager::getInstance().isMarkedAsDeleted(x))
             continue;
-        toMarkAsDeleted.push_back(x.path);
+        toMarkAsDeleted.push_back(x);
     }
 
     DeletedListManager::getInstance().markAsDeleted(toMarkAsDeleted);
 
     return toMarkAsDeleted;
+}
+
+std::vector<std::string> DeletedFileList::markAsDeleted(FileScanner newest) {
+    auto deletedCandidates = newest.getDeletedSince(mLast);
+    return markAsDeleted(extract(deletedCandidates, [](auto& x) { return x.path; }));
 }
 
 std::vector<std::string> DeletedFileList::markAsExistent(FileScanner newest) {

@@ -73,7 +73,6 @@ ClientLogic::Error ClientLogic::loop() {
 }
 
 ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
-    //TODO: finish handling deleted files using DeletedFileList amd DeletedListManager
     FileScanner myFiles(mRoot);
     auto deletedByUser = mDeletedList.markAsDeleted(myFiles);
     std::cerr << "Deleted by user:\n";
@@ -96,31 +95,33 @@ ClientLogic::Error ClientLogic::onIncomingFileList(FileScanner remoteFiles) {
     auto responseDeleted = mCM.receiveBlocking<ServerDeletedList>(currentID());
     if (!responseDeleted) return Error::Timeout;
 
-    FileDiff diff(myFiles, remoteFiles);
-    /*
-    const std::vector<std::string>& remotelyDeleted = responseDeleted->getDeletedList();
-
-    for (auto& x : deletedByUser) {
-        if (std::find(remotelyDeleted.begin(), remotelyDeleted.end(), x)
-                != remotelyDeleted.end()) {
-            toDelete.push_back(x);
+    // Delete remotely deleted files
+    std::vector<std::string> remotelyDeleted = responseDeleted->getDeletedList();
+    {
+       auto toDelete = mDeletedList.markAsDeleted(remotelyDeleted);
+        for (auto& x: toDelete) {
+            auto fullName = FileScanner::joinPaths(mRoot, x);
+            if (FileScanner::exists(fullName)) {
+                FileScanner::remove(fullName);
+                std::cerr << "Removing remotely deleted file:\t" << x << "\n";
+            }
         }
     }
-    auto deleteRes = deleteFiles(extract(toDelete, [](auto& x) { return FileInfo{x, 0}; }));
-    if (deleteRes != Error::NoError) return deleteRes;
 
-    auto toAdd = diff.getModifiedOrAdded();
+    FileDiff diff(myFiles, remoteFiles);
+    // Add remotely added/modified.
+    std::vector<FileInfo> remotelyAddedOrModified = diff.getModifiedOrAdded();
+    {
+        auto res = requestAndSaveNewFiles(remotelyAddedOrModified);
+        if (res != Error::NoError) return res;
+    }
 
-    auto requestRes = requestAndSaveNewFiles(toAdd);
-    if (requestRes != Error::NoError) return requestRes;
-*/
     return Error::NoError;
 }
 
 ClientLogic::Error ClientLogic::deleteFiles(const std::vector<FileInfo>& toDelete) {
     std::cerr << "Deleting files:\n";
     for (auto& x : toDelete) {
-
         auto fullName = FileScanner::joinPaths(mRoot, x.path);
         std::cerr << fullName << "\n";
         assert(FileScanner::exists(fullName));
@@ -176,7 +177,8 @@ ClientLogic::Error ClientLogic::sendDeleteRequests(const std::vector<std::string
 ClientLogic::Error ClientLogic::sendAddRequests(const std::vector<std::string>& toAdd,
                                                 const FileScanner& remote) {
     for (auto& x : toAdd) {
-        auto timestamp = FileScanner::getModificationTime(x);
+        auto fullPath = FileScanner::joinPaths(mRoot, x);
+        auto timestamp = FileScanner::getModificationTime(fullPath);
         if (!remote.contains(x) || remote.getFileInfo(x).timestamp < timestamp) {
             std::cerr << "Sending new file to server:\t" << x << "\n";
             SendFileToServer send(nextID(), x, mRoot, timestamp);
