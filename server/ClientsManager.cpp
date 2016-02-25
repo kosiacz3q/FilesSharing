@@ -32,3 +32,15 @@ void ClientsManager::disconectAll() {
 
     clients.clear();
 }
+
+void ClientsManager::cleanup() {
+
+    mutex_guard  _(exlusiveClientsListAccess);
+
+    for(auto client = clients.begin(); client != clients.end(); ){
+        if ((*client)->isClosed())
+            clients.erase(client++);
+        else
+            client++;
+    }
+}

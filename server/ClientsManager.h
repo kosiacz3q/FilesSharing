@@ -19,6 +19,8 @@ public:
 
     void disconectAll();
 
+    void cleanup();
+
 private:
 
     std::mutex exlusiveClientsListAccess;

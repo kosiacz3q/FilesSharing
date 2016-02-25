@@ -31,15 +31,25 @@ void ClientHandler::handleLoop(AtomicThreadStatePtr currentState,
         *currentState = ThreadState::RUNNING;
     }
 
+    int maxEmptyRequests = 2000;
+
     while(*currentState == ThreadState::RUNNING){
 
         auto currentMsg = cm->receiveNext();
 
         if (!currentMsg){
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            --maxEmptyRequests;
+
+            if (!maxEmptyRequests){
+                printf("Client disconnected by timeout\n");
+                break;
+            }
+
             continue;
         }
 
+        maxEmptyRequests = 2000;
         ac->resolve(std::move(currentMsg), cm);
     }
 

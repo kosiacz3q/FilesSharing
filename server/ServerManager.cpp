@@ -47,6 +47,9 @@ void ServerManager::connectingLoop(RuntimeContextPtr sCtx, const int serverSocke
     sockaddr in_addr;
     socklen_t in_len = sizeof(in_addr);
 
+    int cleanupTime = 200;
+
+
     while (sCtx->getState() == ServerState::RUNNING) {
 
         int infd;
@@ -62,6 +65,11 @@ void ServerManager::connectingLoop(RuntimeContextPtr sCtx, const int serverSocke
                 sCtx->clientsManager->AddClient(
                         std::make_shared<ClientHandler>(
                                std::make_shared<CommunicationManager>(std::move(ss)), actionsContainer));
+            }
+
+            if (!--cleanupTime){
+                sCtx->clientsManager->cleanup();
+                cleanupTime = 200;
             }
         }
 

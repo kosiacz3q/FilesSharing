@@ -7,6 +7,9 @@
 #include "Actions/IAction.h"
 
 class ClientHandler {
+private:
+    enum class ThreadState { PENDING, RUNNING, CLOSED};
+
 public:
 
     ClientHandler(CommunicationManagerPtr communicationManager,
@@ -17,9 +20,11 @@ public:
         return id;
     }
 
-private:
+    bool isClosed(){
+        return *threadState == ThreadState::CLOSED;
+    }
 
-    enum class ThreadState { PENDING, RUNNING, CLOSED};
+private:
 
     typedef std::atomic<ThreadState> AtomicThreadState;
     typedef std::shared_ptr<AtomicThreadState> AtomicThreadStatePtr;
