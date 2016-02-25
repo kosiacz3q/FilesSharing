@@ -24,7 +24,7 @@ private:
 
     int pollFd;
 
-    void connectingLoop(RuntimeContextPtr sCtx, const int pollFd, const int serverSocketFd);
+    void connectingLoop(RuntimeContextPtr sCtx, const int serverSocketFd);
 
     RuntimeContextPtr context;
     ServerSocketPtr serverSocket;
