@@ -6,8 +6,6 @@
 #include <chrono>
 #include <thread>
 
-#include <QFileSystemWatcher>
-
 #include "common/file_diff.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
@@ -35,11 +33,6 @@ ClientLogic::ClientLogic(CommunicationManager& cm, const std::string& rootFolder
     }
 
     std::cout << errorMessage << "\n";
-    auto* watcher = new QFileSystemWatcher();
-    watcher->addPath("./");
-    QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, [] (const QString& str) {
-        std::cerr << "Changed:\t" << str.toStdString() << std::endl;
-    });
 }
 
 bool ClientLogic::checkTimeDiff() {

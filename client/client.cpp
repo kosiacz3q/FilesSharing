@@ -4,6 +4,7 @@
 
 #include <QCoreApplication>
 #include <QFileSystemWatcher>
+#include <QTimer>
 #include <boost/filesystem.hpp>
 
 #include "common/file_scanner.h"
@@ -24,12 +25,22 @@ void startQAppThread(int argc, char** argv, const char* path, ConcurrentContext&
     auto absolutePath = boost::filesystem::absolute(path).string();
     std::cerr << "Absolute path:\t" << absolutePath << "\n";
     watcher.addPath(absolutePath.c_str());
-    QObject::connect(&watcher, &QFileSystemWatcher::directoryChanged, [&] (const QString& str) {
-        std::cerr << "Hola amigo:\t" << str.toStdString() << std::endl;
+    QTimer timer;
+    timer.setInterval(5000);
+    timer.setSingleShot(true);
+
+    auto waker = [&] (auto&...) {
+        std::cerr << "Hola amigo! Wakie wakie!" << std::endl;
         std::unique_lock<std::mutex> lk(cc.m);
         cc.isReady = true;
         cc.cv.notify_one();
-    });
+        timer.stop();
+        timer.start();
+    };
+
+    QObject::connect(&watcher, &QFileSystemWatcher::directoryChanged, waker);
+    QObject::connect(&timer, &QTimer::timeout, waker);
+    timer.start();
 
     app.exec();
 }

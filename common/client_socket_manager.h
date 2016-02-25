@@ -5,7 +5,14 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <condition_variable>
 #include <memory>
+
+struct ConcurrentContext {
+    bool isReady = false;
+    std::mutex m;
+    std::condition_variable cv;
+};
 
 class ClientSocketManager {
 public:
