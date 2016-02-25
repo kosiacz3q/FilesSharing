@@ -1,5 +1,10 @@
 #include <iostream>
 #include <cstring>
+#include <thread>
+
+#include <QCoreApplication>
+#include <QFileSystemWatcher>
+#include <boost/filesystem.hpp>
 
 #include "common/file_scanner.h"
 
@@ -10,6 +15,29 @@
 #include "client_logic.h"
 
 using namespace std;
+
+void startQAppThread(int argc, char** argv, const char* path, ConcurrentContext& cc) {
+    QCoreApplication app(argc, argv);
+    std::cerr << "Hello Qt\n";
+
+    QFileSystemWatcher watcher;
+    auto absolutePath = boost::filesystem::absolute(path).string();
+    std::cerr << "Absolute path:\t" << absolutePath << "\n";
+    watcher.addPath(absolutePath.c_str());
+    QObject::connect(&watcher, &QFileSystemWatcher::directoryChanged, [&] (const QString& str) {
+        std::cerr << "Hola amigo:\t" << str.toStdString() << std::endl;
+        std::unique_lock<std::mutex> lk(cc.m);
+        cc.isReady = true;
+        cc.cv.notify_one();
+    });
+
+    app.exec();
+}
+
+void startAppThread(int argc, char** argv, const char*& path, ConcurrentContext& cc) {
+    std::thread t(startQAppThread, argc, argv, path, ref(cc));
+    t.detach();
+}
 
 int main(int argc, char** argv)
 {
@@ -29,6 +57,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    ConcurrentContext cc;
+    startAppThread(argc, argv, rootFolder, cc);
     // test with echo '22000A00000000000000' | xxd -r -p | nc -l -p 4096 > file.hex
 
     CommunicationManager cm(std::move(ss));
@@ -36,7 +66,7 @@ int main(int argc, char** argv)
     switch (0) {
         case 0: //normal use
         {
-            ClientLogic _(cm, rootFolder);
+            ClientLogic _(cm, rootFolder, cc);
 
             break;
         }

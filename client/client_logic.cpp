@@ -6,13 +6,17 @@
 #include <chrono>
 #include <thread>
 
+#include <QFileSystemWatcher>
+
 #include "common/file_diff.h"
 #include "common/client_api.h"
 #include "common/server_api.h"
 
-ClientLogic::ClientLogic(CommunicationManager& cm, const std::string& rootFolder)
+ClientLogic::ClientLogic(CommunicationManager& cm, const std::string& rootFolder,
+                         ConcurrentContext& cc)
         : mCM(cm)
-        , mRoot(rootFolder) {
+        , mRoot(rootFolder)
+        , mCC(cc) {
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`\n";
     std::cout << "Starting client. Root folder: " << mRoot << "\n";
 
@@ -31,6 +35,11 @@ ClientLogic::ClientLogic(CommunicationManager& cm, const std::string& rootFolder
     }
 
     std::cout << errorMessage << "\n";
+    auto* watcher = new QFileSystemWatcher();
+    watcher->addPath("./");
+    QObject::connect(watcher, &QFileSystemWatcher::directoryChanged, [] (const QString& str) {
+        std::cerr << "Changed:\t" << str.toStdString() << std::endl;
+    });
 }
 
 bool ClientLogic::checkTimeDiff() {
@@ -56,7 +65,14 @@ bool ClientLogic::checkTimeDiff() {
 
 ClientLogic::Error ClientLogic::loop() {
     using namespace std::chrono_literals;
+    bool first = true;
     while (true) {
+        if (!first) {
+            std::unique_lock<std::mutex> lk(mCC.m);
+            mCC.isReady = false;
+        }
+        first = false;
+
         GetFileList getFileList(nextID());
         mCM.send(getFileList);
         auto fileList = mCM.receiveBlocking<ServerFileList>(currentID());
@@ -65,8 +81,17 @@ ClientLogic::Error ClientLogic::loop() {
         FileScanner remoteFiles(::to_bytes_impl(list));
         auto res = onIncomingFileList(remoteFiles);//remoteFiles);
         if (res != Error::NoError) return res;
-        
-        std::this_thread::sleep_for(10ms);
+
+        {
+            std::unique_lock<std::mutex> lk(mCC.m);
+            while (!mCC.isReady)
+            {
+                mCC.cv.wait(lk);
+                if (!mCC.isReady)
+                    std::cerr << "Spurious wake up!\n";
+            }
+        }
+        std::cerr << "File structure changed; next iteration!\n";
     }
 
     return Error::NoError;

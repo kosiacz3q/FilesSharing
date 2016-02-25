@@ -2,14 +2,22 @@
 
 #include <string>
 #include <cstdint>
+#include <atomic>
+#include <condition_variable>
 #include "common/file_scanner.h"
 #include "common/deleted_file_list.h"
 
 #include "common/communication_manager.h"
 
+struct ConcurrentContext {
+    bool isReady = false;
+    std::mutex m;
+    std::condition_variable cv;
+};
+
 class ClientLogic {
 public:
-    ClientLogic(CommunicationManager& cm, const std::string& rootFolder);
+    ClientLogic(CommunicationManager& cm, const std::string& rootFolder, ConcurrentContext& cc);
 
     enum class Error {
         NoError,
@@ -37,5 +45,6 @@ private:
     std::string mRoot;
     uint32_t mMessageID = 0;
     time_t mTimeOffset = 0;
+    ConcurrentContext& mCC;
 };
 
